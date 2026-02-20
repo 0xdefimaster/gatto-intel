@@ -15,8 +15,6 @@ from flask import Flask, render_template, jsonify
 from datetime import datetime
 from scraper import calculate_war_index
 from email.utils import parsedate_to_datetime
-import requests
-
 
 app = Flask(__name__)
 
@@ -202,51 +200,14 @@ def fetch_signals():
     return 0, [], False, 0
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 1. CANLI VERİ ÇEKME FONKSİYONU
-def get_live_burn_info():
-    # Token çıkana kadar görünecek varsayılan değerler
-    data = {
-        "total_burned": "1,420,690,000",
-        "last_tx": "Awaiting Launch"
-    }
-    
-    mint_address = os.environ.get("TOKEN_MINT_ADDRESS")
-    initial_supply = os.environ.get("INITIAL_SUPPLY")
-
-    # Eğer adres veya arz girilmemişse statik veriyi dön
-    if not mint_address or not initial_supply:
-        return data
-
-    try:
-        payload = {
-            "jsonrpc": "2.0", "id": 1,
-            "method": "getTokenSupply",
-            "params": [mint_address]
-        }
-        response = requests.post("https://api.mainnet-beta.solana.com", json=payload, timeout=5)
-        res_json = response.json()
-
-        if "result" in res_json:
-            current_supply = res_json["result"]["value"]["uiAmount"]
-            # Yakılan = Başlangıç Arzı - Mevcut Arz
-            burned_amount = float(initial_supply) - float(current_supply)
-            
-            if burned_amount > 0:
-                data["total_burned"] = "{:,.0f}".format(burned_amount)
-                data["last_tx"] = "Verified on Chain"
-        return data
-    except:
-        return data
-
-# 2. BURN_DATA SÖZLÜĞÜNÜ GÜNCELLE
-live_info = get_live_burn_info()
-
+# BURN DATA (Statik)
+# ─────────────────────────────────────────────────────────────────────────────
 BURN_DATA = {
     "token":         "$GATTO",
-    "total_burned":  live_info["total_burned"],
-    "usd_burned":    "$42,069", 
-    "last_tx":       live_info["last_tx"],
-    "last_tx_url":   "https://solscan.io/token/" + os.environ.get("TOKEN_MINT_ADDRESS", ""),
+    "total_burned": "1,420,690,000",
+    "usd_burned":    "$42,069",
+    "last_tx":       "5vA2...XzY9",
+    "last_tx_url":   "https://solscan.io/tx/",
     "burn_events":   42,
     "next_burn":     "TARGET: 2,000,000,000",
     "buy_url":       "https://raydium.io/swap/",

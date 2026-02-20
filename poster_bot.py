@@ -23,9 +23,11 @@ except ImportError:
 from scraper import fetch_all_raw_posts, INTEL_ACCOUNTS
 
 # ── .env yükleyici ─────────────────────────────────────────────────────────────
+# ── .env yükleyici ─────────────────────────────────────────────────────────────
 def load_dotenv(path=".env"):
     if not os.path.exists(path): return
-    with open(path) as f:
+    # open(path) kısmına encoding ekliyoruz
+    with open(path, "r", encoding="utf-8") as f: 
         for line in f:
             line = line.strip()
             if line and not line.startswith("#") and "=" in line:
@@ -58,7 +60,8 @@ DISCLAIMER = (
 def load_posted_ids() -> set:
     if not os.path.exists(POSTED_IDS_FILE): return set()
     try:
-        with open(POSTED_IDS_FILE) as f:
+        # encoding="utf-8" ekledik
+        with open(POSTED_IDS_FILE, "r", encoding="utf-8") as f:
             return set(json.load(f).get("ids", []))
     except Exception:
         return set()
@@ -66,12 +69,13 @@ def load_posted_ids() -> set:
 def save_posted_id(post_id: str, posted_ids: set):
     posted_ids.add(post_id)
     keep = list(posted_ids)[-2000:]
-    with open(POSTED_IDS_FILE, "w") as f:
+    # Burayı encoding="utf-8" ile güncelliyoruz
+    with open(POSTED_IDS_FILE, "w", encoding="utf-8") as f:
         json.dump({
             "ids": keep,
             "last_updated": datetime.now(timezone.utc).isoformat(),
             "total_saved": len(keep),
-        }, f, indent=2)
+        }, f, indent=2, ensure_ascii=False) # ensure_ascii=False karakterleri düzgün yazar
 
 def make_post_id(post: dict) -> str:
     link = post.get("link", "")
@@ -290,3 +294,5 @@ def run(dry_run: bool = False):
 if __name__ == "__main__":
     dry = "--dry-run" in sys.argv or "-d" in sys.argv
     run(dry_run=dry)
+
+

@@ -383,28 +383,30 @@ footer a:hover{color:var(--nv)}
     <div class="burn-panel">
 <div class="burn-title"><span class="fire">🛡️</span> {{ burn.token }} — {{ burn.ticker }}</div>
       <div class="burn-row">
-        <div class="burn-lbl">TOKEN</div>
-        <div class="burn-val">$Gatto intel</div>
-      </div>
+        <div class="burn-lbl">TOKEN NAME</div>
+        <div class="burn-val">{{ burn.token }}</div>
+    </div>
 
       <div class="burn-row">
         <div class="burn-lbl">TICKER</div>
         <div class="burn-val amber">{{ burn.ticker }}</div>
-      </div>
+    </div>
 
       <div class="burn-row" style="position:relative;z-index:1;">
-  <div class="burn-lbl">CONTRACT ADDRESS</div>
-  <div style="font-family:var(--font-mono);font-size:11px;color:#00FF41;word-break:break-all;margin-top:4px;position:relative;z-index:2;">{{ burn.ca }}</div>
-</div>
-
-      <div class="burn-row" style="position:relative;z-index:1;">
-        <div class="burn-lbl">ABOUT</div>
-        <div style="font-family:var(--font-mono);font-size:11px;color:var(--white-dim);line-height:1.6;margin-top:4px;">
-          {{ burn.description }}
+        <div class="burn-lbl">CONTRACT ADDRESS</div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:#00FF41;word-break:break-all;margin-top:4px;position:relative;z-index:2;">
+            {{ burn.ca }}
         </div>
-      </div>
+    </div>
 
-    <a class="btn-buy" href="{{ burn.buy_url }}" target="_blank" rel="noopener">BUY $WNDX</a>    
+      <div class="burn-row" style="position:relative;z-index:1;">
+        <div class="burn-lbl">PROJECT BRIEF</div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--white-dim);line-height:1.6;margin-top:4px;">
+            {{ burn.description }}
+        </div>
+    </div>
+
+    <a class="btn-buy" href="{{ burn.buy_url }}" target="_blank" rel="noopener">BUY {{ burn.ticker }}</a>    
 </div>
 
     <!-- WAR THREAT INDEX -->

@@ -202,13 +202,13 @@ def fetch_signals():
 # ─────────────────────────────────────────────────────────────────────────────
 # TOKEN DATA
 # ─────────────────────────────────────────────────────────────────────────────
+# BURN_DATA ismini TOKEN_DATA olarak düşünebilirsin
 BURN_DATA = {
-    "token":       "$Gatto Intel",
-    "ticker":      "Windex",
-    "description": "Global instability meets on-chain intelligence. $WNDX is the native utility token of the War Index (Windex) ecosystem. Our AI-driven bot monitors global conflict zones in real-time, providing instant updates and risk analysis on X. Stay informed, stay ahead. 🌍🛡️",
-    "ca":          "9qLhkx5dpCoPRqg89JASKpkFoVLqTywC2Gsu2XTMpump",
-    "buy_url":     "https://pump.fun/coin/9qLhkx5dpCoPRqg89JASKpkFoVLqTywC2Gsu2XTMpump",
-    "recent_txs":  []
+    "token":      "$Gatto Intel",
+    "ticker":     "Windex",
+    "description": "Global instability meets on-chain intelligence. $WNDX is the native utility token of the War Index (Windex) ecosystem...",
+    "ca":         "9qLhkx5dpCoPRqg89JASKpkFoVLqTywC2Gsu2XTMpump",
+    "buy_url":    "https://pump.fun/coin/9qLhkx5dpCoPRqg89JASKpkFoVLqTywC2Gsu2XTMpump"
 }
 
 # ─────────────────────────────────────────────────────────────────────────────

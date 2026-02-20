@@ -41,11 +41,11 @@ NEWS_SOURCES = [
 
 REQUIRED_KEYWORDS = {
     "iran", "hormuz", "strait", "tehran", "irgc", "persian gulf",
-    "israel", "idf", "netanyahu", "gaza", "F-35", "hamas",
+    "israel", "idf", "netanyahu", "gaza", "f-35", "hamas",
     "hezbollah", "houthi", "yemen", "syria", "lebanon",
     "missile", "rocket", "airstrike", "drone", "warship", "tanker",
     "nuclear", "military", "attack", "explosion", "offensive", "invasion",
-    "oil price", "crude oil", "brent", "C-5M"
+    "oil price", "crude oil", "brent", "c-5m"
 }
 
 BLACKLIST_TITLE = {
@@ -200,18 +200,15 @@ def fetch_signals():
     return 0, [], False, 0
 
 # ─────────────────────────────────────────────────────────────────────────────
-# BURN DATA (Statik)
+# TOKEN DATA
 # ─────────────────────────────────────────────────────────────────────────────
 BURN_DATA = {
-    "token":         "$GATTO",
-    "total_burned": "1,420,690,000",
-    "usd_burned":    "$42,069",
-    "last_tx":       "5vA2...XzY9",
-    "last_tx_url":   "https://solscan.io/tx/",
-    "burn_events":   42,
-    "next_burn":     "TARGET: 2,000,000,000",
-    "buy_url":       "https://raydium.io/swap/",
-    "recent_txs":    []
+    "token":       "$Gatto Intel",
+    "ticker":      "Windex",
+    "description": "Global instability meets on-chain intelligence. $WNDX is the native utility token of the War Index (Windex) ecosystem. Our AI-driven bot monitors global conflict zones in real-time, providing instant updates and risk analysis on X. Stay informed, stay ahead. 🌍🛡️",
+    "ca":          "9qLhkx5dpCoPRqg89JASKpkFoVLqTywC2Gsu2XTMpump",
+    "buy_url":     "https://pump.fun/coin/9qLhkx5dpCoPRqg89JASKpkFoVLqTywC2Gsu2XTMpump",
+    "recent_txs":  []
 }
 
 # ─────────────────────────────────────────────────────────────────────────────

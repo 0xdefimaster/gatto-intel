@@ -1,19 +1,12 @@
-"""
-scraper.py — Gatto Intelligence v3.1
-Google News fallback kaldırıldı.
-Nitter çalışmazsa sessizce atlar.
-"""
-
 import re
 import requests
 import xml.etree.ElementTree as ET
 from difflib import SequenceMatcher
 from email.utils import parsedate_to_datetime
 
-INTEL_ACCOUNTS = [
-    "sentdefender", "war_monitor",
-    "MonitorX99800", "visionergeo", "IranObserver0",
-]
+
+# 1. HESAPLAR VE GÜNCEL INSTANCE'LAR
+INTEL_ACCOUNTS = ["sentdefender", "war_monitor", "MonitorX99800", "visionergeo", "IranObserver0"]
 
 NITTER_INSTANCES = [
     "https://nitter.poast.org",
@@ -21,307 +14,217 @@ NITTER_INSTANCES = [
     "https://nitter.kavin.rocks",      # YENİ
     "https://nitter.1d4.us",            # YENİ
     "https://nitter.unixfox.eu",        # YENİ
-    "https://nitter.net",               # YENİ
+    "https://nitter.net",       
+    "https://nitter.perennialte.ch", # Şu an en stabillerden biri
+    "https://nitter.esmailelbob.xyz",    
 ]
 
 IMPACT_KEYWORDS = {
-    "missile":   10, "airstrike": 10, "explosion":  7,
-    "attack":     5, "strike":     5, "rocket":      5,
-    "war":        5, "U.S. Air":      3, "combat":      4,
-    "bomb":       7, "Hezbollah":   9, "offensive":   4,
-    "f-35":       3, "carrier":    3, "warship":     3,
-    "deployment": 2, "tanker":     5, "blockade":    4,
-    "troops":     4, "military":   4, "drone":       3,
-    "iran":       3, "israel":     3, "hormuz":      5,
-    "hezbollah":  6, "hamas":      6, "houthi":      7,
-    "nuclear":    8, "su-35":  2, "galaxy":        6,
+    # --- Üst Düzey Savaş Sinyalleri (Kritik) ---
+    "notam":        12,  # Hava sahası kapatma (Saldırı öncesi en net işaret)
+    "nuclear":      10,  # Nükleer tesis veya tehdit söylemi
+    "ballistic":    10,  # Balistik füze fırlatışı
+    "spoofing":     9,   # GPS karartma (Savunma sistemleri devrede demek)
+    "centcom":      8,   # ABD Merkez Komutanlığı resmi hareketliliği
+    "preemptive":   8,   # Önleyici vuruş terimi
+    
+    # --- Askeri Varlıklar ve Birimler ---
+    "carrier group": 7,  # Uçak gemisi görev grubu sevkiyatı
+    "b-52":         7,   # Stratejik bombardıman uçakları
+    "kc-135":       6,   # Yakıt ikmali (Hava operasyonu hazırlığı)
+    "iron dome":    7,   # Demir Kubbe aktivasyonu
+    "irgc":         8,   # Devrim Muhafızları (İran tarafı hareketliliği)
+    "idf":          6,   # İsrail Savunma Kuvvetleri açıklamaları
+    
+    # --- Coğrafi Sinyaller ---
+    "hormuz":       8,   # Hürmüz Boğazı (Küresel kriz tetikleyici)
+    "red sea":      6,   # Kızıldeniz/Husi hareketliliği
+    "natanz":       8,   # İran nükleer tesisi
+    "tel aviv":     5,   # Doğrudan hedef şehir
+    "tehran":       5,   # Doğrudan hedef şehir
+    "uss gerald":   7,   
+    
+    # --- Genel Çatışma Terimleri (Puanlar Optimize Edildi) ---
+    "missile":      8, 
+    "airstrike":    8, 
+    "explosion":    7,
+    "intercepted":  6,   # Füzenin havada vurulması
+    "retaliation":  7,   # Misilleme yemini
+    "mobilization": 6,   # Seferberlik ilanı
+    "war":          5,
+    "hezbollah":    7,
+    "houthi":       7,
+    "syria":        4,
+    "lebanon":      4,
+    "iran":         3,
+    "abd":          3,
+    "israeli":      3, 
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-# YARDIMCI
+# YARDIMCI FONKSİYONLAR
 # ─────────────────────────────────────────────────────────────────────────────
 
 def normalize(title: str) -> str:
     t = title.lower().strip()
-    t = re.sub(r'\s[-|–]\s.*$', '', t)
     t = re.sub(r'[^\w\s]', '', t)
     return re.sub(r'\s+', ' ', t).strip()
 
-
 def is_duplicate(new_title: str, seen: list, threshold: float = 0.82) -> tuple:
-    norm_new  = normalize(new_title)
+    norm_new = normalize(new_title)
     words_new = set(norm_new.split())
     for i, old in enumerate(seen):
-        norm_old  = normalize(old)
+        norm_old = normalize(old)
         words_old = set(norm_old.split())
-        if norm_new == norm_old:
-            return True, i
-        union = words_new | words_old
-        if union and len(words_new & words_old) / len(union) >= 0.62:
-            return True, i
-        if SequenceMatcher(None, norm_new, norm_old).ratio() >= threshold:
+        if norm_new == norm_old or (words_new & words_old and len(words_new & words_old) / len(words_new | words_old) >= 0.65):
             return True, i
     return False, -1
 
-
-def score_title(title: str) -> tuple:
-    # Metni küçült ama özel karakterleri (tire gibi) koru
-    tl = title.lower() 
+def score_title(text: str) -> tuple:
+    # Metni tamamen küçük harfe çekiyoruz (Case-sensitivity sorunu bitti)
+    tl = text.lower()
     total, hits = 0, []
+    
+    # 1. Standart Anahtar Kelime Puanlaması
     for kw, pts in IMPACT_KEYWORDS.items():
-        # Kelime bazlı tam eşleşme veya metin içinde geçiş kontrolü
         if kw in tl:
             total += pts
             hits.append(kw)
+            
+    # 2. YENİ: ÖZEL KOMBİNASYON BONUSU (Iran + Strike)
+    # Eğer metinde hem 'iran' hem 'strike' geçiyorsa +5 puan ekle
+    if "iran" in tl and "strike" in tl:
+        total += 5
+        hits.append("iran+strike_bonus") # Takip edebilmek için hit listesine ekledik
+        
     return total, hits
 
-
 # ─────────────────────────────────────────────────────────────────────────────
-# RSS ÇEKİCİ
+# RSS ÇEKİCİ (GÜÇLENDİRİLMİŞ)
 # ─────────────────────────────────────────────────────────────────────────────
 
 def fetch_rss(url: str, label: str, limit: int = 10) -> list:
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+    }
     try:
-        resp = requests.get(
-            url, timeout=8,
-            headers={"User-Agent": "Mozilla/5.0 (GattoIntel/3.1)"}
-        )
+        # SSL hatalarını ve timeout'ları yönetmek için verify=False ve timeout=12
+        resp = requests.get(url, headers=headers, timeout=12, verify=False)
         resp.raise_for_status()
+        
+        # XML Ayrıştırma
         root = ET.fromstring(resp.content)
+        items = []
+        
+        # Nitter'ın gönderdiği XML'de itemlar genellikle .//item altında bulunur
+        for item in root.findall(".//item"):
+            title = item.findtext("title", "").strip()
+            desc = item.findtext("description", "").strip()
+            link = item.findtext("link", "").strip()
+            pubdate = item.findtext("pubDate", "").strip()
+
+            if title or desc:
+                # HTML temizliği
+                clean_desc = re.sub(r'<[^>]+>', '', desc).strip()
+                items.append({
+                    "title": title,
+                    "description": clean_desc,
+                    "link": link,
+                    "pubDate": pubdate
+                })
+            if len(items) >= limit: break
+            
+        print(f"[RSS ✓] {label} → {len(items)} öğe alındı.")
+        return items
     except Exception as e:
         print(f"[RSS ✗] {label}: {e}")
         return []
 
-    items = []
-    for item in root.findall(".//item"):
-        title       = item.findtext("title",       "").strip()
-        link        = item.findtext("link",        "").strip()
-        pubdate     = item.findtext("pubDate",     "").strip()
-        description = item.findtext("description", "").strip()
-
-        if title and len(title) > 8:
-            desc_clean = re.sub(r'<[^>]+>', '', description).strip()
-            items.append({
-                "title":       title,
-                "link":        link,
-                "pubDate":     pubdate,
-                "description": desc_clean,
-            })
-
-        if len(items) >= limit:
-            break
-
-    print(f"[RSS ✓] {label} → {len(items)} öğe (limit={limit})")
-    return items
-
-
 def fetch_account(account: str, limit: int = 10) -> list:
-    """
-    Sadece Nitter dener. Hiçbiri çalışmazsa boş döner.
-    Google News fallback YOK.
-    """
     for instance in NITTER_INSTANCES:
-        url     = f"{instance.rstrip('/')}/{account}/rss"
+        url = f"{instance.rstrip('/')}/{account}/rss"
         results = fetch_rss(url, f"nitter/@{account}", limit=limit)
         if results:
             for r in results:
                 r["account"] = account
-                r["source"]  = "nitter"
             return results
-
-    print(f"[SKIP] @{account}: Tüm Nitter instance'ları erişilemez, atlanıyor.")
     return []
 
-
 # ─────────────────────────────────────────────────────────────────────────────
-# SAVAŞ ENDEKSİ
+# SAVAŞ ENDEKSİ HESAPLAMA (TEK VE TEMİZ VERSİYON)
 # ─────────────────────────────────────────────────────────────────────────────
 
 def calculate_war_index(per_account_limit: int = 10) -> tuple:
     total_score = 0
-    signals     = []
+    signals = []
     seen_titles = []
 
     for account in INTEL_ACCOUNTS:
-        # Nitter'dan verileri çek
         items = fetch_account(account, limit=per_account_limit)
 
         for item in items:
-            # 1. BAŞLIK VE AÇIKLAMAYI BİRLEŞTİR (Daha iyi tarama için)
+            # Başlık ve açıklamayı birleştir (Bazı tweetler sadece açıklamada olur)
             full_text = f"{item.get('title', '')} {item.get('description', '')}"
             
-            # 2. PUANLAMA
             pts, hits = score_title(full_text)
-            
-            if pts == 0:
-                continue
+            if pts == 0: continue
 
-            # 3. TARİHİ İŞLE (Sıralama için sayıya çeviriyoruz)
-            try:
-                dt = parsedate_to_datetime(item.get("pubDate", ""))
-                timestamp = dt.timestamp()
-            except Exception:
-                timestamp = 0
-
-            # 4. KOPYA KONTROLÜ
+            # Kopya Kontrolü
             dup, dup_idx = is_duplicate(full_text, seen_titles)
-            
             if dup:
                 if 0 <= dup_idx < len(signals):
                     asb = signals[dup_idx].setdefault("also_shared_by", [])
-                    if account not in asb:
-                        asb.append(account)
+                    if account not in asb: asb.append(account)
                 continue
 
-            # 5. SİNYAL LİSTESİNE EKLE
+            # Zaman damgasını işle
+            try:
+                dt = parsedate_to_datetime(item.get("pubDate", ""))
+                ts = dt.timestamp()
+            except: ts = 0
+
             seen_titles.append(full_text)
             total_score += pts
             
-            # Ekranda görünecek temiz metin
-            display_text = item.get('title', '') if len(item.get('title', '')) > 30 else full_text
-            
             signals.append({
-                "account":        account,
-                "text":           display_text[:160].replace('\n', ' ').strip() + "...",
-                "title":          item.get('title', '')[:120],
-                "link":           item.get("link", ""),
-                "pubDate":        item.get("pubDate", ""),
-                "timestamp":      timestamp, # Sıralama anahtarı
-                "score":          pts,
-                "keywords":       hits,
+                "account": account,
+                "text": full_text[:160].replace('\n', ' ') + "...",
+                "title": item.get('title', '')[:120],
+                "link": item.get("link", ""),
+                "pubDate": item.get("pubDate", ""),
+                "timestamp": ts,
+                "score": pts,
+                "keywords": hits,
                 "also_shared_by": [],
             })
 
-    # --- KRİTİK SIRALAMA ---
-    # Artik 'score' yerine 'timestamp' kullanıyoruz. 
-    # Böylece en tehlikeli olan değil, EN SON PAYLAŞILAN en üstte çıkar.
+    # En yeni sinyalleri üstte göster
     signals.sort(key=lambda x: x["timestamp"], reverse=True)
 
-    # Endeks hesaplama (Aynı kalıyor)
     SCORE_CEILING = 400
     bar_pct = min(int(total_score / SCORE_CEILING * 100), 100)
     
     for s in signals:
         s["raw_total"] = total_score
 
-    print(f"\n[GATTO] Tarama Tamamlandı | Toplam Skor: {total_score} | Bar: %{bar_pct} | Sinyal: {len(signals)}\n")
-    return bar_pct, signals
-    total_score = 0
-    signals     = []
-    seen_titles = []
-
-    for account in INTEL_ACCOUNTS:
-        # Limit değerini biraz artırmak (örn: 15) kaçırma ihtimalini düşürür
-        items = fetch_account(account, limit=per_account_limit)
-
-        for item in items:
-            # 1. BAŞLIK VE AÇIKLAMAYI BİRLEŞTİR (En Kritik Güncelleme)
-            # Bazı Nitter instance'ları tweet metnini sadece description'a koyar.
-            full_text = f"{item.get('title', '')} {item.get('description', '')}"
-            
-            # 2. PUANLAMA (Birleşik metin üzerinden)
-            pts, hits = score_title(full_text)
-            
-            if pts == 0:
-                continue
-
-            # 3. KOPYA KONTROLÜ
-            # Duplicate kontrolünü de genişletilmiş metin üzerinden yapıyoruz
-            dup, dup_idx = is_duplicate(full_text, seen_titles)
-            
-            if dup:
-                if 0 <= dup_idx < len(signals):
-                    asb = signals[dup_idx].setdefault("also_shared_by", [])
-                    if account not in asb:
-                        asb.append(account)
-                # print(f"  [DEDUP] @{account}: Tekrar eden içerik atlandı.")
-                continue
-
-            # 4. SİNYAL LİSTESİNE EKLE
-            seen_titles.append(full_text)
-            total_score += pts
-            
-            # Tweetin en temiz halini 'text' olarak sakla (Görsel kirliliği önlemek için ilk 160 karakter)
-            display_text = item.get('title', '') if len(item.get('title', '')) > 30 else full_text
-            
-            signals.append({
-                "account":        account,
-                "text":           display_text[:160].replace('\n', ' ').strip() + "...",
-                "title":          item.get('title', '')[:120],
-                "link":           item.get("link", ""),
-                "pubDate":        item.get("pubDate", ""),
-                "score":          pts,
-                "keywords":       hits,
-                "also_shared_by": [],
-            })
-
-    # Skorlara göre sırala
-    signals.sort(key=lambda x: x["score"], reverse=True)
-
-    SCORE_CEILING = 400
-    bar_pct   = min(int(total_score / SCORE_CEILING * 100), 100)
-    
-    # Tüm sinyallere o anki toplam skoru yaz (frontend için)
-    for s in signals:
-        s["raw_total"] = total_score
-
-    print(f"\n[GATTO] Tarama Tamamlandı | Skor: {total_score} | Bar: %{bar_pct} | Aktif Sinyal: {len(signals)}\n")
-    return bar_pct, signals
-    total_score = 0
-    signals     = []
-    seen_titles = []
-
-    for account in INTEL_ACCOUNTS:
-        items = fetch_account(account, limit=per_account_limit)
-
-        for item in items:
-            pts, hits = score_title(item["title"])
-            if pts == 0:
-                continue
-
-            dup, dup_idx = is_duplicate(item["title"], seen_titles)
-            if dup:
-                if 0 <= dup_idx < len(signals):
-                    asb = signals[dup_idx].setdefault("also_shared_by", [])
-                    if account not in asb:
-                        asb.append(account)
-                print(f"  [DEDUP] @{account}: «{item['title'][:55]}...»")
-                continue
-
-            seen_titles.append(item["title"])
-            total_score += pts
-            signals.append({
-                "account":        account,
-                "text":           item["title"][:120],
-                "title":          item["title"][:120],
-                "link":           item.get("link", ""),
-                "pubDate":        item.get("pubDate", ""),
-                "score":          pts,
-                "keywords":       hits,
-                "also_shared_by": [],
-            })
-
-    signals.sort(key=lambda x: x["score"], reverse=True)
-
-    SCORE_CEILING = 400
-    bar_pct   = min(int(total_score / SCORE_CEILING * 100), 100)
-    raw_score = total_score
-
-    for s in signals:
-        s["raw_total"] = raw_score
-
-    print(f"\n[GATTO] Ham Skor: {raw_score} | Bar: %{bar_pct} | Sinyal: {len(signals)}\n")
+    print(f"\n[GATTO] Tarama Bitti | Skor: {total_score} | Bar: %{bar_pct} | Sinyal: {len(signals)}\n")
     return bar_pct, signals
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# HAM GÖNDERI ÇEKME
+# BOT İÇİN RAW VERİ ÇEKİCİ (POSTER_BOT İÇİN GEREKLİ)
 # ─────────────────────────────────────────────────────────────────────────────
 
 def fetch_all_raw_posts(limit_per_account: int = 10) -> list:
-    all_posts = []
+    """Tüm hesaplardan ham gönderileri toplar ve bir liste olarak döner."""
+    all_raw_posts = []
+    print(f"[SCRAPER] {len(INTEL_ACCOUNTS)} hesaptan ham veriler toplanıyor...")
+    
     for account in INTEL_ACCOUNTS:
-        posts = fetch_account(account, limit=limit_per_account)
-        all_posts.extend(posts)
-        print(f"  @{account}: {len(posts)} gönderi toplandı")
-    return all_posts
+        items = fetch_account(account, limit=limit_per_account)
+        for item in items:
+            # Botun tanıması için hesap bilgisini ekliyoruz
+            item["account"] = account
+            all_raw_posts.append(item)
+            
+    return all_raw_posts

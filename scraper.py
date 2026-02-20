@@ -1,6 +1,7 @@
 """
-scraper.py — Gatto Intelligence v3.0
-Her hesaptan son 10 gönderi çeker + savaş endeksi hesaplar.
+scraper.py — Gatto Intelligence v3.1
+Google News fallback kaldırıldı.
+Nitter çalışmazsa sessizce atlar.
 """
 
 import re
@@ -71,15 +72,14 @@ def score_title(title: str) -> tuple:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# RSS ÇEKİCİ — LIMIT PARAMETRESİ EKLENDİ
+# RSS ÇEKİCİ
 # ─────────────────────────────────────────────────────────────────────────────
 
 def fetch_rss(url: str, label: str, limit: int = 10) -> list:
-    """RSS URL'sinden son `limit` kadar öğeyi çeker."""
     try:
         resp = requests.get(
             url, timeout=8,
-            headers={"User-Agent": "Mozilla/5.0 (GattoIntel/3.0)"}
+            headers={"User-Agent": "Mozilla/5.0 (GattoIntel/3.1)"}
         )
         resp.raise_for_status()
         root = ET.fromstring(resp.content)
@@ -89,14 +89,12 @@ def fetch_rss(url: str, label: str, limit: int = 10) -> list:
 
     items = []
     for item in root.findall(".//item"):
-        title      = item.findtext("title",   "").strip()
-        link       = item.findtext("link",    "").strip()
-        pubdate    = item.findtext("pubDate", "").strip()
-        # Nitter'da orijinal tweet metni <description> içinde olabilir
+        title       = item.findtext("title",       "").strip()
+        link        = item.findtext("link",        "").strip()
+        pubdate     = item.findtext("pubDate",     "").strip()
         description = item.findtext("description", "").strip()
 
         if title and len(title) > 8:
-            # HTML taglerini description'dan temizle
             desc_clean = re.sub(r'<[^>]+>', '', description).strip()
             items.append({
                 "title":       title,
@@ -105,7 +103,7 @@ def fetch_rss(url: str, label: str, limit: int = 10) -> list:
                 "description": desc_clean,
             })
 
-        if len(items) >= limit:  # İlk `limit` öğeyi al
+        if len(items) >= limit:
             break
 
     print(f"[RSS ✓] {label} → {len(items)} öğe (limit={limit})")
@@ -114,8 +112,8 @@ def fetch_rss(url: str, label: str, limit: int = 10) -> list:
 
 def fetch_account(account: str, limit: int = 10) -> list:
     """
-    Nitter → fallback: Google News.
-    Her kaynaktan son `limit` gönderiyi döner.
+    Sadece Nitter dener. Hiçbiri çalışmazsa boş döner.
+    Google News fallback YOK.
     """
     for instance in NITTER_INSTANCES:
         url     = f"{instance.rstrip('/')}/{account}/rss"
@@ -126,25 +124,15 @@ def fetch_account(account: str, limit: int = 10) -> list:
                 r["source"]  = "nitter"
             return results
 
-    print(f"[FALLBACK] @{account}: Nitter yok → Google News")
-    query   = requests.utils.quote(f'"{account}" twitter')
-    url     = f"https://news.google.com/rss/search?q={query}&hl=en-US&gl=US&ceid=US:en"
-    results = fetch_rss(url, f"gnews/@{account}", limit=limit)
-    for r in results:
-        r["account"] = account
-        r["source"]  = "gnews"
-    return results
+    print(f"[SKIP] @{account}: Tüm Nitter instance'ları erişilemez, atlanıyor.")
+    return []
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# SAVAŞ ENDEKSİ (app.py tarafından çağrılır)
+# SAVAŞ ENDEKSİ
 # ─────────────────────────────────────────────────────────────────────────────
 
 def calculate_war_index(per_account_limit: int = 10) -> tuple:
-    """
-    Tüm hesapları tara, keyword skorla, dedup uygula.
-    Döner: (bar_pct: 0-100, signals: list)
-    """
     total_score = 0
     signals     = []
     seen_titles = []
@@ -193,15 +181,10 @@ def calculate_war_index(per_account_limit: int = 10) -> tuple:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# HAM GÖNDERI ÇEKME (poster_bot.py tarafından çağrılır)
+# HAM GÖNDERI ÇEKME
 # ─────────────────────────────────────────────────────────────────────────────
 
 def fetch_all_raw_posts(limit_per_account: int = 10) -> list:
-    """
-    Her hesabın son `limit_per_account` gönderisini çeker.
-    Döner: ham post listesi (dedup / skorlama yok)
-    Format: [{"account", "title", "description", "link", "pubDate", "source"}, ...]
-    """
     all_posts = []
     for account in INTEL_ACCOUNTS:
         posts = fetch_account(account, limit=limit_per_account)

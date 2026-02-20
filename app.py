@@ -1,8 +1,7 @@
 """
-app.py — Gatto Intelligence v4.0
-NewsAPI tamamen kaldırıldı.
-Reuters, BBC, Al Jazeera, AP gibi güvenilir kaynaların
-RSS feed'lerinden doğrudan haber çekilir.
+app.py — Gatto Intelligence v4.1
+- Sinyal cache: 15 dakika
+- Google News fallback kaldırıldı (scraper.py'de)
 """
 
 import os
@@ -17,57 +16,38 @@ from scraper import calculate_war_index
 
 app = Flask(__name__)
 
-CACHE_FILE     = "gatto_cache.json"
-CACHE_DURATION = 30 * 60   # 30 dakika
+CACHE_FILE          = "gatto_cache.json"
+SIGNAL_CACHE_FILE   = "signal_cache.json"
+CACHE_DURATION      = 30 * 60   # 30 dakika (haberler)
+SIGNAL_CACHE_DURATION = 15 * 60 # 15 dakika (sinyaller)
 
-# ─────────────────────────────────────────────────────────────────────────────
-# HABER RSS KAYNAKLARI
-# Her kaynak için: url, etiket, opsiyonel keyword filtresi
-# ─────────────────────────────────────────────────────────────────────────────
 NEWS_SOURCES = [
-    # Reuters
     {"url": "https://feeds.reuters.com/reuters/worldNews",         "tag": "REUTERS",     "filter": True},
     {"url": "https://feeds.reuters.com/Reuters/worldNews",         "tag": "REUTERS",     "filter": True},
-    # BBC World
     {"url": "https://feeds.bbci.co.uk/news/world/rss.xml",         "tag": "BBC",         "filter": True},
-    {"url": "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml", "tag": "BBC·ME",  "filter": False},  # Zaten bölgesel
-    # Al Jazeera
+    {"url": "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml", "tag": "BBC·ME",  "filter": False},
     {"url": "https://www.aljazeera.com/xml/rss/all.xml",           "tag": "ALJAZEERA",   "filter": True},
-    # AP News
     {"url": "https://rsshub.app/apnews/topics/world-news",         "tag": "AP",          "filter": True},
-    # The Guardian – Middle East
     {"url": "https://www.theguardian.com/world/middleeast/rss",    "tag": "GUARDIAN·ME", "filter": False},
-    # Defense News
     {"url": "https://www.defensenews.com/arc/outboundfeeds/rss/",  "tag": "DEFNEWS",     "filter": False},
-    # Middle East Eye
     {"url": "https://www.middleeasteye.net/rss",                   "tag": "MEE",         "filter": False},
-    # Jerusalem Post
     {"url": "https://www.jpost.com/rss/rssfeedsFrontPage.aspx",    "tag": "JPOST",       "filter": True},
-    # Times of Israel
     {"url": "https://www.timesofisrael.com/feed/",                 "tag": "TOI",         "filter": True},
 ]
 
-# ─────────────────────────────────────────────────────────────────────────────
-# ZORUNLU KELIMELER — bunlardan en az 1'i başlık+desc'te olmalı
-# filter=True olan kaynaklar için uygulanır
-# ─────────────────────────────────────────────────────────────────────────────
 REQUIRED_KEYWORDS = {
-    # Coğrafya / aktörler
-    "iran", "hormuz", "Hormuz " , "strait", "tehran", "irgc", "persian gulf",
+    "iran", "hormuz", "strait", "tehran", "irgc", "persian gulf",
     "israel", "idf", "netanyahu", "gaza", "west bank", "hamas",
     "hezbollah", "houthi", "yemen", "iraq", "syria", "lebanon",
     "saudi", "riyadh", "gulf",
-    # Askeri / çatışma
     "missile", "rocket", "airstrike", "air strike", "strike",
     "drone", "warship", "tanker", "blockade", "naval",
     "nuclear", "enrichment", "uranium", "sanction",
     "military", "troops", "attack", "explosion", "bomb",
     "ceasefire", "offensive", "invasion",
-    # Enerji / ekonomi (bölgesel)
     "oil price", "crude oil", "brent", "opec",
 }
 
-# Bu kelimeler başlıkta varsa → kesin at
 BLACKLIST_TITLE = {
     "nfl", "nba", "soccer", "football", "basketball", "baseball", "tennis",
     "oscar", "grammy", "celebrity", "kardashian", "taylor swift",
@@ -75,25 +55,19 @@ BLACKLIST_TITLE = {
     "jesse jackson", "vinfas", "base oil industry",
     "india france", "pakistan crisis", "divine animal",
     "resale guarantee", "buyback guarantee",
-    "stock market", "dow jones", "nasdaq",    # genel finans değil bölgesel
-    "hurricane", "earthquake", "flood",       # doğal afet
-    "covid", "vaccine", "cancer", "diabetes", # sağlık
+    "stock market", "dow jones", "nasdaq",
+    "hurricane", "earthquake", "flood",
+    "covid", "vaccine", "cancer", "diabetes",
 }
 
 def passes_filter(title: str, description: str, use_filter: bool) -> bool:
-    text_lower = (title + " " + (description or "")).lower()
+    text_lower  = (title + " " + (description or "")).lower()
     title_lower = title.lower()
-
-    # Kara liste kelime kontrolü (her kaynak için)
     for bad in BLACKLIST_TITLE:
         if bad in title_lower:
             return False
-
-    # Filtre kapalıysa (zaten bölgesel kaynak) buraya kadar geçti
     if not use_filter:
         return True
-
-    # Zorunlu keyword kontrolü
     return any(kw in text_lower for kw in REQUIRED_KEYWORDS)
 
 
@@ -101,14 +75,14 @@ def passes_filter(title: str, description: str, use_filter: bool) -> bool:
 # RSS PARSER
 # ─────────────────────────────────────────────────────────────────────────────
 def fetch_rss_news(source: dict) -> list:
-    url      = source["url"]
-    tag      = source["tag"]
+    url        = source["url"]
+    tag        = source["tag"]
     use_filter = source.get("filter", True)
 
     try:
         resp = requests.get(
             url, timeout=8,
-            headers={"User-Agent": "Mozilla/5.0 (GattoIntel/4.0; +https://thegatto.xyz)"}
+            headers={"User-Agent": "Mozilla/5.0 (GattoIntel/4.1; +https://thegatto.xyz)"}
         )
         resp.raise_for_status()
         root = ET.fromstring(resp.content)
@@ -122,9 +96,7 @@ def fetch_rss_news(source: dict) -> list:
         link    = item.findtext("link",        "").strip()
         desc    = item.findtext("description", "").strip()
         pubdate = item.findtext("pubDate",     "").strip()
-
-        # HTML tag temizliği
-        desc = re.sub(r'<[^>]+>', '', desc).strip()
+        desc    = re.sub(r'<[^>]+>', '', desc).strip()
 
         if not title or len(title) < 10:
             continue
@@ -145,7 +117,7 @@ def fetch_rss_news(source: dict) -> list:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# HABER ÇEKME (cache'li)
+# HABER CACHE
 # ─────────────────────────────────────────────────────────────────────────────
 def load_cache():
     if not os.path.exists(CACHE_FILE):
@@ -174,7 +146,6 @@ def fetch_news():
     for source in NEWS_SOURCES:
         all_articles.extend(fetch_rss_news(source))
 
-    # URL dedup
     seen, unique = set(), []
     for a in all_articles:
         u = a.get("url", "")
@@ -182,13 +153,70 @@ def fetch_news():
             seen.add(u)
             unique.append(a)
 
-    # Tarihe göre sırala (RSS pubDate string, basit sort yeterli)
     unique.sort(key=lambda x: x.get("publishedAt", ""), reverse=True)
     top = unique[:15]
 
     print(f"[FEED] {len(top)} temiz haber cache'lendi.")
     save_cache(top)
     return top, False, 0
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SİNYAL CACHE (15 dakika)
+# ─────────────────────────────────────────────────────────────────────────────
+def load_signal_cache():
+    if not os.path.exists(SIGNAL_CACHE_FILE):
+        return None
+    try:
+        with open(SIGNAL_CACHE_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if time.time() - data.get("timestamp", 0) < SIGNAL_CACHE_DURATION:
+            return data
+    except Exception:
+        pass
+    return None
+
+def save_signal_cache(war_score, signals):
+    with open(SIGNAL_CACHE_FILE, "w", encoding="utf-8") as f:
+        json.dump({
+            "timestamp": time.time(),
+            "war_score": war_score,
+            "signals":   signals,
+        }, f, ensure_ascii=False, indent=2)
+
+def fetch_signals():
+    """
+    Sinyal cache'ini kontrol et.
+    - Cache geçerliyse → cache'den döndür
+    - Cache yoksa/eskiyse → Nitter'dan çek, cache'le
+    - Nitter çalışmıyorsa → eski cache'i döndür (boş değil)
+    """
+    cached = load_signal_cache()
+
+    # Cache geçerli mi?
+    if cached:
+        age = int(time.time() - cached["timestamp"])
+        if age < SIGNAL_CACHE_DURATION:
+            print(f"[SIGNAL CACHE HIT] {age//60}dk önce güncellendi")
+            return cached["war_score"], cached["signals"], True, age
+
+    # Cache yok veya eski → Nitter'dan çek
+    print("[SIGNAL] Nitter'dan çekiliyor...")
+    war_score, signals = calculate_war_index()
+
+    if signals:
+        # Nitter çalıştı, cache'le
+        save_signal_cache(war_score, signals)
+        return war_score, signals, False, 0
+    else:
+        # Nitter çalışmadı → eski cache varsa onu kullan
+        if cached:
+            age = int(time.time() - cached["timestamp"])
+            print(f"[SIGNAL] Nitter yok, eski cache kullanılıyor ({age//60}dk önce)")
+            return cached["war_score"], cached["signals"], True, age
+        else:
+            # Hiç cache yok, sıfır döndür
+            return 0, [], False, 0
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -214,9 +242,12 @@ BURN_DATA = {
 # ─────────────────────────────────────────────────────────────────────────────
 @app.route("/")
 def index():
-    articles, from_cache, cache_age = fetch_news()
-    war_score, intelligence_signals  = calculate_war_index()
-    next_min = max(0, (CACHE_DURATION - cache_age) // 60)
+    articles, from_cache, cache_age           = fetch_news()
+    war_score, intelligence_signals, sig_cached, sig_age = fetch_signals()
+
+    next_min     = max(0, (CACHE_DURATION - cache_age) // 60)
+    sig_next_min = max(0, (SIGNAL_CACHE_DURATION - sig_age) // 60)
+
     return render_template(
         "index.html",
         articles         = articles,
@@ -226,14 +257,22 @@ def index():
         from_cache       = from_cache,
         cache_age_min    = cache_age // 60,
         next_refresh_min = next_min,
+        sig_cached       = sig_cached,
+        sig_age_min      = sig_age // 60,
+        sig_next_min     = sig_next_min,
         now              = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
         api_ok           = True,
     )
 
 @app.route("/api/war-index")
 def api_war_index():
-    score, signals = calculate_war_index()
+    score, signals, _, _ = fetch_signals()
     return jsonify({"war_index": score, "signals": signals})
+
+@app.route("/api/news")
+def api_news():
+    articles, _, _ = fetch_news()
+    return jsonify({"articles": articles, "count": len(articles)})
 
 @app.route("/api/burn")
 def api_burn():
@@ -241,7 +280,6 @@ def api_burn():
 
 @app.route("/api/news/debug")
 def api_news_debug():
-    """Cache'i atlar, tüm kaynakları canlı test eder."""
     result = {}
     for source in NEWS_SOURCES:
         arts = fetch_rss_news(source)

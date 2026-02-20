@@ -1,0 +1,7 @@
+.env
+__pycache__/
+*.pyc
+gatto_cache.json
+posted_ids.json
+posted_hashes.json
+venv/

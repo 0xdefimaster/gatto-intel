@@ -154,7 +154,7 @@ def fetch_account(account: str, limit: int = 10) -> list:
 # SAVAŞ ENDEKSİ HESAPLAMA (TEK VE TEMİZ VERSİYON)
 # ─────────────────────────────────────────────────────────────────────────────
 
-def calculate_war_index(per_account_limit: int = 10) -> tuple:
+def calculate_war_index(per_account_limit: int = 15) -> tuple:
     total_score = 0
     signals = []
     seen_titles = []

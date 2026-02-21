@@ -6,6 +6,8 @@ import sys
 from datetime import datetime, timezone
 import google.generativeai as genai
 from deep_translator import GoogleTranslator
+import hashlib
+
 
 # ── KÜTÜPHANE KONTROLLERİ ─────────────────────────────────────────────────────
 try:
@@ -37,7 +39,14 @@ LIMIT_PER_ACCOUNT   = 5
 TWEET_DELAY_SECONDS = 30
 MAX_TWEETS_PER_RUN  = 5
 POSTED_IDS_FILE     = "posted_ids.json"
-RISK_THRESHOLD      = 10  # Sadece bu puanın üzerindekiler (11, 12...) paylaşılır
+RISK_THRESHOLD      = 9  # Sadece bu puanın üzerindekiler paylaşılır
+
+# Gemini model sıralaması — rate limit'e göre sırayla denenir
+GEMINI_MODELS = [
+    "gemini-2.5-flash",
+    "gemini-2.5-flash-lite-preview-06-17",
+    "gemini-3-flash-preview",
+]
 
 # .env veya Ortam Değişkenlerini Yükle
 def load_dotenv(path=".env"):
@@ -58,58 +67,17 @@ ACCESS_TOKEN  = os.environ.get("TWITTER_ACCESS_TOKEN", "")
 ACCESS_SECRET = os.environ.get("TWITTER_ACCESS_SECRET", "")
 GEMINI_KEY    = os.environ.get("GEMINI_API_KEY", "")
 
-# ── GEMİNİ YAPILANDIRMASI (RESMİ ÖRNEK FORMAT) ────────────────────────────────
+# ── GEMİNİ YAPILANDIRMASI ─────────────────────────────────────────────────────
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
 
 if GEMINI_KEY:
     try:
-        # Configure API key
         genai.configure(api_key=GEMINI_KEY)
-        
-        # Generation configuration (Official example format)
-        generation_config = {
-            "temperature": 0.7,
-            "top_p": 0.95,
-            "top_k": 40,
-            "max_output_tokens": 500,
-            "response_mime_type": "text/plain",
-        }
-        
-        # Safety settings (Optional - prevents blocking)
-        safety_settings = [
-            {
-                "category": "HARM_CATEGORY_HARASSMENT",
-                "threshold": "BLOCK_NONE",
-            },
-            {
-                "category": "HARM_CATEGORY_HATE_SPEECH",
-                "threshold": "BLOCK_NONE",
-            },
-            {
-                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                "threshold": "BLOCK_NONE",
-            },
-            {
-                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-                "threshold": "BLOCK_NONE",
-            },
-        ]
-        
-        # Model initialization (Official example format)
-        ai_model = genai.GenerativeModel(
-            model_name="gemini-3-flash-preview",  # veya "gemini-1.5-pro" daha iyi sonuç için
-            generation_config=generation_config,
-            safety_settings=safety_settings,
-        )
-        
-        print("[✓] Gemini AI başarıyla yapılandırıldı (gemini-3-flash-preview).")
-        
+        print(f"[✓] Gemini API yapılandırıldı. Model sırası: {' → '.join(GEMINI_MODELS)} → Plan B")
     except Exception as e:
         print(f"[✗] Gemini yapılandırma hatası: {e}")
-        ai_model = None
 else:
     print("[!] GEMINI_API_KEY bulunamadı, AI devre dışı (Çifte çeviri aktif).")
-    ai_model = None
 
 # ── TEMİZLEME FONKSİYONU ──────────────────────────────────────────────────────
 
@@ -136,21 +104,49 @@ def clean_raw_text(text: str) -> str:
             seen.append(s.strip())
     return ' '.join(seen).strip()
 
+# ── BENZERLİK TEMİZLEME FONKSİYONU ───────────────────────────────────────────
+
+def remove_similar_sentences(text: str) -> str:
+    """
+    Kelime örtüşmesi %60'ın üzerinde olan tekrar eden cümleleri kaldırır.
+    Haber kesilmez, sadece gerçek tekrarlar çıkarılır.
+    """
+    sentences = re.split(r'(?<=[.!?])\s+', text)
+    filtered = []
+    for s in sentences:
+        s = s.strip()
+        if not s:
+            continue
+        s_words = set(s.lower().split())
+        is_duplicate = False
+        for kept in filtered:
+            kept_words = set(kept.lower().split())
+            if len(s_words) > 0 and len(kept_words) > 0:
+                overlap = len(s_words & kept_words) / max(len(s_words), len(kept_words))
+                if overlap > 0.6:
+                    is_duplicate = True
+                    break
+        if not is_duplicate:
+            filtered.append(s)
+    return ' '.join(filtered).strip()
+
 # ── ÖZGÜNLEŞTİRME MOTORU ──────────────────────────────────────────────────────
 
 def smart_rewrite(text: str) -> str:
     """
-    Plan A: Gemini ile profesyonelce yeniden yazar (Official API format).
-    Plan B: Hata durumunda çeviri hilesiyle (EN->DE->EN) özgünleştirir.
-    Her iki plan da önce clean_raw_text() ile temizlenmiş metin alır.
+    Plan A: gemini-2.5-flash → gemini-2.5-flash-lite → Plan B (çifte çeviri)
+    Rate limit'e takılınca sıradaki modele geçer, hepsi başarısız olursa Plan B.
     """
-    # Metni her iki plan için de önce temizle
     text = clean_raw_text(text)
 
-    # ── PLAN A: GEMİNİ (RESMİ ÖRNEK FORMAT) ──────────────────────────────────
-    if ai_model:
-        try:
-            prompt = f"""Rewrite the following intelligence report as ONE concise, professional breaking news paragraph in English.
+    # Sırayla denenecek Gemini modelleri
+    GEMINI_MODELS = [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite-preview-06-17",
+        "gemini-3-flash-preview",
+    ]
+
+    prompt = f"""Rewrite the following intelligence report as ONE concise, professional breaking news paragraph in English.
 
 Instructions:
 - Sound like Reuters or AP wire service
@@ -161,42 +157,74 @@ Instructions:
 
 Raw Data: {text}
 """
-            # Generate content (Official API format)
-            response = ai_model.generate_content(prompt)
-            
-            # Check if response was blocked
-            if not response.text:
-                print(f"[!] Gemini: Response blocked or empty, using Plan B")
-                raise Exception("Empty response from Gemini")
-            
-            rewritten = response.text.strip()
-            print(f"[✓] Gemini rewrite başarılı ({len(rewritten)} karakter)")
-            return rewritten
-            
-        except Exception as e:
-            print(f"[!] Gemini hatası: {e}")
-            print(f"[→] Plan B aktif (Çifte çeviri)")
+
+    generation_config = {
+        "temperature": 0.7,
+        "top_p": 0.95,
+        "top_k": 40,
+        "max_output_tokens": 1000,
+        "response_mime_type": "text/plain",
+    }
+
+    safety_settings = [
+        {"category": "HARM_CATEGORY_HARASSMENT",        "threshold": "BLOCK_NONE"},
+        {"category": "HARM_CATEGORY_HATE_SPEECH",       "threshold": "BLOCK_NONE"},
+        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+    ]
+
+    # ── PLAN A: Gemini modelleri sırayla dene ─────────────────────────────────
+    if GEMINI_KEY:
+        for model_name in GEMINI_MODELS:
+            try:
+                model = genai.GenerativeModel(
+                    model_name=model_name,
+                    generation_config=generation_config,
+                    safety_settings=safety_settings,
+                )
+                response = model.generate_content(prompt)
+
+                if not response.text:
+                    raise Exception("Empty response")
+
+                rewritten = response.text.strip()
+                print(f"[✓] {model_name} rewrite başarılı ({len(rewritten)} karakter)")
+                return rewritten
+
+            except Exception as e:
+                err = str(e)
+                if "429" in err or "quota" in err.lower() or "rate" in err.lower() or "resource_exhausted" in err.lower():
+                    print(f"[!] {model_name} rate limit — sonraki model deneniyor...")
+                    continue
+                else:
+                    print(f"[!] {model_name} hatası: {e} — sonraki model deneniyor...")
+                    continue
+
+        print("[→] Tüm Gemini modelleri başarısız — Plan B aktif (Çifte çeviri)")
 
     # ── PLAN B: ÇİFTE ÇEVİRİ (Özgünleştirme Hilesi) ─────────────────────────
     try:
         print("[→] Çifte çeviri başlıyor (EN→DE→EN)...")
-        
+
         # 1. Adım: Metni (TR veya EN fark etmez) Almancaya çevir
         german_text = GoogleTranslator(source='auto', target='de').translate(text)
-        
+
         # 2. Adım: Almancayı tekrar İngilizceye çevir → bu özgünleştirir
         final_english_text = GoogleTranslator(source='de', target='en').translate(german_text)
-        
-        # Plan B çıktısından da tekrar cümle temizliği yap
+
+        # Plan B çıktısından tekrar cümle temizliği yap
         final_english_text = clean_raw_text(final_english_text)
-        
+
+        # Benzer cümleleri de temizle (kelime örtüşmesi %60'ın üzerindeyse sil)
+        final_english_text = remove_similar_sentences(final_english_text)
+
         print(f"[✓] Çifte çeviri başarılı ({len(final_english_text)} karakter)")
         return final_english_text
-        
+
     except Exception as e2:
         print(f"[✗] Çeviri motoru hatası: {e2}")
         print(f"[→] Ham metin döndürülüyor (temizlenmiş)")
-        return text  # Tüm sistemler çökerse temizlenmiş orijinali döndür
+        return text
 
 # ── YARDIMCI FONKSİYONLAR ─────────────────────────────────────────────────────
 
@@ -215,21 +243,46 @@ def save_posted_id(post_id: str, posted_ids: set):
         json.dump({"ids": keep, "last_updated": datetime.now(timezone.utc).isoformat()}, f, indent=2)
 
 def make_post_id(post: dict) -> str:
-    # İçerik tabanlı ID oluşturma (Farklı kaynaklardan gelen aynı haberi engeller)
-    content = (post.get("title", "") + post.get("description", ""))[:100]
-    return str(abs(hash(content)))
+    # Sadece title'ın ilk 50 karakteri — farklı kaynaklardan gelen aynı haber için aynı ID
+    content = post.get("title", "")[:50].lower().strip()
+    return hashlib.md5(content.encode()).hexdigest()
 
 def format_tweet(rewritten_content: str, score: int) -> str:
-    """Anonim format: Hesap adı yok, link yok, RT yok."""
+    """Tweet formatı: Başlık + Haber + Dinamik Hashtagler"""
     alert_type = "🚨 Critical" if score >= 10 else "🟠 Important"
     header = f"{alert_type} (Risk score: {score})\n\n"
 
-    # Karakter Sınırı Kontrolü
-    max_len = 600 - len(header) - 5
+    # İçeriğe göre dinamik hashtagler
+    text_lower = rewritten_content.lower()
+    tags = []
+
+    if any(w in text_lower for w in ["ukraine", "kiev", "kyiv", "zelensky"]):
+        tags.append("#Ukraine")
+    if any(w in text_lower for w in ["russia", "putin", "moscow", "kremlin"]):
+        tags.append("#Russia")
+    if any(w in text_lower for w in ["missile", "rocket", "strike", "attack"]):
+        tags.append("#WarUpdate")
+    if any(w in text_lower for w in ["nato", "eu ", "europe", "european"]):
+        tags.append("#NATO")
+    if any(w in text_lower for w in ["israel", "gaza", "hamas", "idf"]):
+        tags.append("#MiddleEast")
+    if any(w in text_lower for w in ["iran", "tehran"]):
+        tags.append("#Iran")
+    if any(w in text_lower for w in ["china", "beijing", "taiwan"]):
+        tags.append("#China")
+    if any(w in text_lower for w in ["weapon", "ammo", "ammunition", "defense", "military"]):
+        tags.append("#Defense")
+
+    tags.append("#BreakingNews")
+    tags.append("#Intel")
+
+    hashtags = "\n\n" + " ".join(tags[:6])
+
+    max_len = 4000 - len(header) - len(hashtags) - 10
     if len(rewritten_content) > max_len:
         rewritten_content = rewritten_content[:max_len] + "..."
 
-    return f"{header}{rewritten_content}"
+    return f"{header}{rewritten_content}{hashtags}"
 
 def get_client():
     if not TWEEPY_OK: return None
@@ -250,17 +303,18 @@ def get_client():
 def run_cycle():
     print(f"\n[SCAN] Tarama başladı: {datetime.now().strftime('%H:%M:%S')}")
 
-    client = get_client()
-    posted_ids = load_posted_ids()
-    all_posts = fetch_all_raw_posts(limit_per_account=LIMIT_PER_ACCOUNT)
+    client        = get_client()
+    posted_ids    = load_posted_ids()
+    all_posts     = fetch_all_raw_posts(limit_per_account=LIMIT_PER_ACCOUNT)
+    count         = 0
+    recent_titles = []  # Bu döngüde işlenen başlıklar (duplicate kontrolü)
 
-    count = 0
     for post in all_posts:
         # 1. Puanlama
         raw_text = f"{post.get('title', '')} {post.get('description', '')}"
         score, hits = score_title(raw_text)
 
-        # 2. Risk Puanı Filtresi: RISK_THRESHOLD üzerindeyse devam et
+        # 2. Risk Puanı Filtresi
         if score <= RISK_THRESHOLD:
             continue
 
@@ -269,23 +323,34 @@ def run_cycle():
         if pid in posted_ids:
             continue
 
-        # 4. Kaynak Bilgisi (Terminale Bas)
+        # 4. Bu döngüde benzer başlık işlendi mi?
+        title_short = post.get("title", "")[:60].lower().strip()
+        if any(title_short in t or t in title_short for t in recent_titles):
+            print(f"[~] Duplicate atlandı: {title_short[:40]}...")
+            continue
+        recent_titles.append(title_short)
+
+        # 5. Kaynak Bilgisi (Terminale Bas)
         source_account = post.get("account", "Bilinmeyen")
         source_link = post.get("link", "Link yok")
-        print(f"[!] Risk tespit edildi | Kaynak: @{source_account} | Link: {source_link} | Score: {score} | Eşleşen: {hits}")
+        print(f"[!] Risk tespit edildi | Kaynak: @{source_account} | Score: {score}")
 
-        # 5. Temizle + AI/Çeviri ile Yeniden Yaz
+        # 6. ID'yi hemen kaydet — çift tweet'i engeller
+        save_posted_id(pid, posted_ids)
+
+        # 7. Temizle + AI/Çeviri ile Yeniden Yaz
         unique_text = smart_rewrite(raw_text)
+
+        # 8. Formatla
         tweet_text = format_tweet(unique_text, score)
 
         try:
             if client:
                 client.create_tweet(text=tweet_text)
-                print(f"[✓] Tweet paylaşıldı | Kaynak: @{source_account}")
+                print(f"[✓] Tweet paylaşıldı | Premium Mod Aktif")
             else:
                 print(f"[DRY RUN]:\n{tweet_text}\n")
 
-            save_posted_id(pid, posted_ids)
             count += 1
 
             if count >= MAX_TWEETS_PER_RUN:
@@ -293,7 +358,7 @@ def run_cycle():
                 break
 
             time.sleep(TWEET_DELAY_SECONDS)
-            
+
         except Exception as e:
             print(f"[✗] Tweet hatası: {e}")
 
@@ -304,10 +369,10 @@ def run_cycle():
 if __name__ == "__main__":
     if APS_OK:
         scheduler = BackgroundScheduler()
-        # Her 10 dakikada bir çalıştır
-        scheduler.add_job(run_cycle, 'interval', minutes=10, next_run_time=datetime.now())
+        # Her 20 dakikada bir çalıştır
+        scheduler.add_job(run_cycle, 'interval', minutes=15, next_run_time=datetime.now())
         scheduler.start()
-        print("[BOT] 🔥 GATTO INTEL Aktif! (10 dk aralıkla tarama)")
+        print("[BOT] 🔥 GATTO INTEL Aktif! (15 dk aralıkla tarama | Premium Mode)")
         print("[BOT] Ctrl+C ile durdurun.\n")
 
         try:

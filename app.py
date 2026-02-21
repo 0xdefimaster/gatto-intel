@@ -40,7 +40,7 @@ NEWS_SOURCES = [
 ]
 
 REQUIRED_KEYWORDS = {
-    "iran", "hormuz", "strait", "tehran", "irgc", "persian gulf",
+    "iran", "hormuz", "strait", "tehran", "irgc", "persian gulf", "conflict ",
     "israel", "idf", "netanyahu", "gaza", "f-35", "hamas",
     "hezbollah", "houthi", "yemen", "syria", "lebanon",
     "missile", "rocket", "airstrike", "drone", "warship", "tanker",

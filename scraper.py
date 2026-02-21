@@ -6,7 +6,7 @@ from email.utils import parsedate_to_datetime
 
 
 # 1. HESAPLAR VE GÜNCEL INSTANCE'LAR
-INTEL_ACCOUNTS = ["sentdefender", "war_monitor", "MonitorX99800", "visionergeo", "IranObserver0"]
+INTEL_ACCOUNTS = ["sentdefender", "war_monitor", "MonitorX99800", "visionergeo", "IranObserver0","DailyIranNews", "Conflict_Radar",]
 
 NITTER_INSTANCES = [
     "https://nitter.poast.org",
@@ -29,6 +29,7 @@ IMPACT_KEYWORDS = {
     "preemptive":   8,   # Önleyici vuruş terimi
     
     # --- Askeri Varlıklar ve Birimler ---
+    "f-35":          6,  # F-35 ABD savaş uçağı
     "carrier group": 7,  # Uçak gemisi görev grubu sevkiyatı
     "b-52":         7,   # Stratejik bombardıman uçakları
     "kc-135":       6,   # Yakıt ikmali (Hava operasyonu hazırlığı)
@@ -42,7 +43,9 @@ IMPACT_KEYWORDS = {
     "natanz":       8,   # İran nükleer tesisi
     "tel aviv":     5,   # Doğrudan hedef şehir
     "tehran":       5,   # Doğrudan hedef şehir
-    "uss gerald":   7,   
+    "uss gerald":   7,   # Abd savaş uçak gemisi
+    "uss abraham":  7,   # Abd savaş uçağı gemisi
+    "afghanistan":  3,  
     
     # --- Genel Çatışma Terimleri (Puanlar Optimize Edildi) ---
     "missile":      8, 
@@ -59,6 +62,7 @@ IMPACT_KEYWORDS = {
     "iran":         3,
     "abd":          3,
     "israeli":      3, 
+    "conflict ":    9,
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -201,7 +205,7 @@ def calculate_war_index(per_account_limit: int = 15) -> tuple:
     # En yeni sinyalleri üstte göster
     signals.sort(key=lambda x: x["timestamp"], reverse=True)
 
-    SCORE_CEILING = 400
+    SCORE_CEILING = 500
     bar_pct = min(int(total_score / SCORE_CEILING * 100), 100)
     
     for s in signals:

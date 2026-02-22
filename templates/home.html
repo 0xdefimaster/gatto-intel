@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% block title %}HOME - GATTO INTELLIGENCE{% endblock %}
+
+{% block extra_styles %}
+<style>
+.home-grid{display:grid;grid-template-columns:1fr 320px;gap:20px;}
+@media(max-width:1024px){.home-grid{grid-template-columns:1fr;}}
+
+.status-banner{background:linear-gradient(135deg,rgba(0,255,65,.05),rgba(0,255,65,.02));
+  border:1px solid var(--nv);border-radius:2px;padding:20px;margin-bottom:20px;
+  display:flex;align-items:center;gap:20px;box-shadow:0 0 20px rgba(0,255,65,.1);}
+.status-icon{font-size:48px;animation:s-pulse 2s ease infinite;}
+@keyframes s-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.status-title{font-family:var(--font-crt);font-size:24px;color:var(--nv);
+  text-shadow:0 0 10px var(--nv);margin-bottom:4px;letter-spacing:2px;}
+.status-desc{font-family:var(--font-mono);font-size:11px;color:var(--white-dim);line-height:1.6;}
+
+/* 3-column news grid */
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media(max-width:1200px){.news-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){.news-grid{grid-template-columns:1fr;}}
+
+.news-card{background:var(--card);border:1px solid var(--border);border-radius:2px;
+  display:flex;flex-direction:column;overflow:hidden;position:relative;
+  transition:all .2s;animation:fade-in .4s ease both;}
+.news-card:hover{border-color:var(--nv);box-shadow:0 0 20px rgba(0,255,65,.15);transform:translateY(-2px);}
+.news-card::before,.news-card::after{content:'';position:absolute;width:10px;height:10px;
+  border-color:var(--nv-faint);border-style:solid;transition:border-color .2s;}
+.news-card::before{top:0;left:0;border-width:1px 0 0 1px;}
+.news-card::after{bottom:0;right:0;border-width:0 1px 1px 0;}
+.news-card:hover::before,.news-card:hover::after{border-color:var(--nv);}
+
+.card-body{padding:14px;flex:1;display:flex;flex-direction:column;}
+.card-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:3px;
+  color:var(--amber);margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.card-tag::before{content:'■';font-size:6px;}
+.card-title{font-family:var(--font-crt);font-size:17px;line-height:1.3;
+  color:var(--nv);text-shadow:0 0 6px rgba(0,255,65,.3);margin-bottom:10px;flex:1;}
+.card-desc{font-size:11px;color:var(--white-dim);line-height:1.5;margin-bottom:12px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.card-footer{display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--border);padding-top:10px;}
+.btn-read{font-family:var(--font-mono);font-size:10px;letter-spacing:1px;
+  color:#000;background:var(--nv);padding:4px 10px;border-radius:1px;
+  text-decoration:none;transition:all .2s;box-shadow:0 0 8px rgba(0,255,65,.3);}
+.btn-read:hover{background:#fff;box-shadow:0 0 16px var(--nv);}
+
+/* Show more */
+.load-more-wrap{grid-column:1/-1;text-align:center;margin-top:6px;}
+.btn-more{font-family:var(--font-mono);font-size:11px;letter-spacing:2px;
+  color:var(--nv);background:transparent;border:1px solid var(--border);
+  padding:10px 28px;cursor:pointer;transition:all .2s;}
+.btn-more:hover{border-color:var(--nv);background:rgba(0,255,65,.05);
+  box-shadow:0 0 12px rgba(0,255,65,.2);}
+
+@keyframes fade-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* Sidebar */
+.sidebar{display:flex;flex-direction:column;gap:18px;}
+.panel{background:var(--card);border:1px solid var(--border);
+  border-radius:2px;padding:18px;position:relative;overflow:hidden;}
+.panel-title{font-family:var(--font-crt);font-size:18px;letter-spacing:3px;
+  color:var(--amber);text-shadow:0 0 10px var(--amber);
+  margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.panel-row{background:rgba(0,255,65,.03);border:1px solid var(--border);
+  border-radius:2px;padding:10px 12px;margin-bottom:10px;}
+.panel-label{font-family:var(--font-mono);font-size:9px;color:#2a5030;
+  letter-spacing:3px;margin-bottom:4px;}
+.panel-value{font-family:var(--font-crt);font-size:20px;color:var(--nv);
+  text-shadow:0 0 14px var(--nv);letter-spacing:2px;}
+.panel-value.amber{color:var(--amber);text-shadow:0 0 14px var(--amber);}
+.btn-primary{display:block;width:100%;text-align:center;
+  font-family:var(--font-head);font-size:15px;letter-spacing:4px;
+  color:#000;background:linear-gradient(135deg,var(--nv),#00cc33);
+  border:none;border-radius:2px;padding:14px;text-decoration:none;
+  cursor:pointer;transition:all .2s;box-shadow:0 0 24px rgba(0,255,65,.3);}
+.btn-primary:hover{box-shadow:0 0 40px rgba(0,255,65,.5);transform:translateY(-1px);}
+.signal-mini{margin-bottom:10px;font-size:11px;line-height:1.4;
+  border-bottom:1px solid var(--border);padding-bottom:8px;}
+.signal-header{display:flex;justify-content:space-between;margin-bottom:3px;}
+.signal-account{color:var(--amber);font-family:var(--font-mono);font-size:9px;letter-spacing:1px;}
+.signal-score{color:var(--red);font-family:var(--font-crt);font-size:15px;}
+.signal-text{color:var(--white-dim);}
+
+/* Map teaser */
+.map-teaser{display:block;background:linear-gradient(135deg,rgba(0,200,255,.06),rgba(0,150,200,.02));
+  border:1px solid #00aacc;border-radius:2px;padding:16px;text-align:center;
+  cursor:pointer;transition:all .2s;text-decoration:none;}
+.map-teaser:hover{border-color:#00eeff;box-shadow:0 0 16px rgba(0,200,255,.25);}
+.map-teaser-title{font-family:var(--font-crt);font-size:22px;color:#00ccff;
+  letter-spacing:2px;margin-bottom:6px;text-shadow:0 0 8px #00aacc;}
+.map-teaser-sub{font-family:var(--font-mono);font-size:10px;color:#3a6a7a;}
+
+/* War bar mini */
+.war-bar-wrap{background:#1a0000;height:20px;border:1px solid var(--red);
+  border-radius:2px;overflow:hidden;position:relative;margin:8px 0 4px;}
+.war-bar-fill{height:100%;background:linear-gradient(90deg,#330000,#ff0000);
+  box-shadow:0 0 8px #ff0000;transition:width 2s ease-in-out;}
+.war-bar-pct{position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  font-family:var(--font-crt);font-size:14px;color:#ff6060;pointer-events:none;}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main">
+  <div class="status-banner">
+    <div class="status-icon">🛡️</div>
+    <div>
+      <div class="status-title">GATTO INTELLIGENCE SYSTEM ACTIVE</div>
+      <div class="status-desc">
+        Monitoring {{ intel_sources|map(attribute='account')|unique|list|length }} intelligence sources
+        across active conflict zones. {{ intel_sources|length }} signals detected.
+        Threat level: <strong style="color:var(--red);">{{ war_score }}%</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-grid">
+    <!-- Main -->
+    <div>
+      <div class="sec-label">📰 LATEST INTELLIGENCE BRIEFINGS — {{ articles|length }} ARTICLES</div>
+      <div class="news-grid" id="ng">
+        {% if articles %}
+          {% for a in articles %}
+          <div class="news-card" {% if loop.index > 12 %}style="display:none" data-h="1"{% endif %}>
+            <div class="card-body">
+              <div class="card-tag">{{ a.get('_tag','INTEL') }}</div>
+              <div class="card-title">{{ a.title }}</div>
+              <div class="card-desc">{{ a.description or '' }}</div>
+              <div class="card-footer">
+                <span style="font-size:9px;color:#2a5030;">
+                  {{ a.source.name if a.source else '—' }} · {{ a.publishedAt[:10] if a.publishedAt else '' }}
+                </span>
+                <a class="btn-read" href="{{ a.url }}" target="_blank" rel="noopener noreferrer">READ ▸</a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          {% if articles|length > 12 %}
+          <div class="load-more-wrap">
+            <button class="btn-more" onclick="showMore()">
+              ▼ LOAD MORE ({{ articles|length - 12 }} remaining)
+            </button>
+          </div>
+          {% endif %}
+        {% else %}
+          <div style="grid-column:1/-1;text-align:center;padding:60px;color:#1a3a1e;
+            font-family:var(--font-crt);font-size:18px;letter-spacing:2px;">
+            // NO INTEL AVAILABLE //
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Threat mini -->
+      <div class="panel" style="border-color:var(--red)">
+        <div class="panel-title" style="color:var(--red);">⚠ THREAT INDEX</div>
+        <div class="war-bar-wrap">
+          <div class="war-bar-fill" style="width:{{ war_score }}%"></div>
+          <div class="war-bar-pct">{{ war_score }}%</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:9px;color:var(--red);">
+          <span>STABLE</span><span>CRITICAL</span>
+        </div>
+        <a href="/intel" style="display:block;text-align:center;margin-top:10px;
+          font-family:var(--font-mono);font-size:10px;color:var(--red);text-decoration:none;letter-spacing:2px;">
+          FULL INTEL REPORT →
+        </a>
+      </div>
+
+      <!-- Map teaser -->
+      <a class="map-teaser" href="/map">
+        <div class="map-teaser-title">🗺 THREAT MAP</div>
+        <div class="map-teaser-sub">
+          {{ intel_sources|length }} events plotted across conflict zones<br>
+          Click to open interactive map →
+        </div>
+      </a>
+
+      <!-- Token -->
+      <div class="panel">
+        <div class="panel-title">🛡️ $WNDX TOKEN</div>
+        <div class="panel-row">
+          <div class="panel-label">TICKER</div>
+          <div class="panel-value amber">$WNDX</div>
+        </div>
+        <div class="panel-row">
+          <div class="panel-label">CONTRACT</div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:#00FF41;word-break:break-all;margin-top:4px;">
+            {{ burn.ca[:16] }}...{{ burn.ca[-8:] }}
+          </div>
+        </div>
+        <div class="panel-row">
+          <div class="panel-label">PROJECT</div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--white-dim);margin-top:4px;line-height:1.5;">
+            {{ burn.description }}
+          </div>
+        </div>
+        <a class="btn-primary" href="{{ burn.buy_url }}" target="_blank" rel="noopener noreferrer">BUY $WNDX</a>
+      </div>
+
+      <!-- Recent signals -->
+      <div class="panel">
+        <div class="panel-title">🔴 RECENT SIGNALS</div>
+        {% if intel_sources %}
+          {% for signal in intel_sources[:6] %}
+          <div class="signal-mini">
+            <div class="signal-header">
+              <span class="signal-account">@{{ signal.account }}</span>
+              <span class="signal-score">[+{{ signal.score }}]</span>
+            </div>
+            <div class="signal-text">{{ signal.text[:90] }}...</div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div style="color:#1a3a1e;font-size:10px;">// NO SIGNALS //</div>
+        {% endif %}
+        <a href="/intel" style="display:block;text-align:center;margin-top:12px;
+          font-family:var(--font-mono);font-size:11px;color:var(--nv);text-decoration:none;">
+          VIEW ALL SIGNALS →
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showMore(){
+  document.querySelectorAll('[data-h="1"]').forEach(function(el){
+    el.style.display='flex'; el.removeAttribute('data-h');
+  });
+  var w = document.querySelector('.load-more-wrap');
+  if(w) w.style.display='none';
+}
+</script>
+{% endblock %}

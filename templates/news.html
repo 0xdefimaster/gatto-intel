@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}NEWS ARCHIVE{% endblock %}
+
+{% block extra_styles %}
+<style>
+.news-header {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:20px; flex-wrap:wrap; gap:16px;
+}
+.news-filters {
+  display:flex; gap:8px; flex-wrap:wrap;
+}
+.filter-tag {
+  font-family:var(--font-mono); font-size:10px; color:var(--nv-dim);
+  background:rgba(0,255,65,.05); border:1px solid var(--border);
+  padding:6px 12px; cursor:pointer; letter-spacing:1px;
+  transition:all .2s; border-radius:2px;
+}
+.filter-tag:hover, .filter-tag.active {
+  background:rgba(0,255,65,.15); border-color:var(--nv);
+  color:var(--nv); box-shadow:0 0 8px rgba(0,255,65,.3);
+}
+
+.news-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:16px;
+}
+
+.news-card {
+  background:var(--card); border:1px solid var(--border); border-radius:2px;
+  display:flex; flex-direction:column; overflow:hidden; position:relative;
+  transition:all .2s; animation:fade-in .3s ease both;
+}
+.news-card:hover {
+  border-color:var(--nv); box-shadow:0 0 20px rgba(0,255,65,.15);
+  transform:translateY(-2px);
+}
+.card-img {
+  width:100%; height:160px; object-fit:cover; display:block;
+  filter:saturate(0.3) brightness(0.7) sepia(0.4) hue-rotate(60deg);
+  transition:filter .3s;
+}
+.news-card:hover .card-img {
+  filter:saturate(0.5) brightness(0.8) sepia(0.3) hue-rotate(60deg);
+}
+.card-img-ph {
+  width:100%; height:160px; background:var(--panel);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-crt); font-size:14px; color:var(--border);
+  letter-spacing:3px; border-bottom:1px solid var(--border);
+}
+.card-body {
+  padding:14px; flex:1; display:flex; flex-direction:column;
+}
+.card-tag {
+  font-family:var(--font-mono); font-size:9px; letter-spacing:3px;
+  color:var(--amber); margin-bottom:8px; display:flex; align-items:center; gap:5px;
+}
+.card-tag::before { content:'■'; font-size:6px; }
+.card-title {
+  font-family:var(--font-crt); font-size:18px; line-height:1.3;
+  color:var(--nv); text-shadow:0 0 6px rgba(0,255,65,.3);
+  margin-bottom:10px; flex:1;
+}
+.card-desc {
+  font-size:11px; color:var(--white-dim); line-height:1.5;
+  margin-bottom:12px; display:-webkit-box; -webkit-line-clamp:3;
+  -webkit-box-orient:vertical; overflow:hidden;
+}
+.card-footer {
+  display:flex; align-items:center; justify-content:space-between;
+  border-top:1px solid var(--border); padding-top:10px;
+}
+.card-source {
+  font-size:9px; color:#2a5030; letter-spacing:1px;
+}
+.btn-read {
+  font-family:var(--font-mono); font-size:10px; letter-spacing:1px;
+  color:#000; background:var(--nv); padding:4px 10px; border-radius:1px;
+  text-decoration:none; transition:all .2s;
+  box-shadow:0 0 8px rgba(0,255,65,.3);
+}
+.btn-read:hover {
+  background:#fff; box-shadow:0 0 16px var(--nv);
+}
+
+@keyframes fade-in {
+  from { opacity:0; transform:translateY(12px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+.empty-state {
+  text-align:center; padding:80px 20px;
+  border:1px dashed var(--border); border-radius:2px;
+  font-family:var(--font-crt); font-size:20px;
+  color:#1a3a1e; letter-spacing:3px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main">
+  
+  <div class="news-header">
+    <div class="sec-label" style="margin:0;">📡 NEWS ARCHIVE — {{ articles|length }} ARTICLES</div>
+    
+    <div class="news-filters">
+      <div class="filter-tag active" data-filter="all">ALL</div>
+      <div class="filter-tag" data-filter="BBC">BBC</div>
+      <div class="filter-tag" data-filter="REUTERS">REUTERS</div>
+      <div class="filter-tag" data-filter="GUARDIAN">GUARDIAN</div>
+      <div class="filter-tag" data-filter="ALJAZEERA">AL JAZEERA</div>
+      <div class="filter-tag" data-filter="DEFNEWS">DEFENSE NEWS</div>
+    </div>
+  </div>
+  
+  <div class="news-grid" id="news-grid">
+    {% if articles %}
+      {% for a in articles %}
+      <div class="news-card" data-source="{{ a.get('_tag','') }}">
+        {% if a.urlToImage %}
+          <img class="card-img" src="{{ a.urlToImage }}" alt="{{ a.title }}" loading="lazy"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+          <div class="card-img-ph" style="display:none;">// NO VISUAL //</div>
+        {% else %}
+          <div class="card-img-ph">// NO VISUAL //</div>
+        {% endif %}
+        
+        <div class="card-body">
+          <div class="card-tag">{{ a.get('_tag','INTEL') }}</div>
+          <div class="card-title">{{ a.title }}</div>
+          <div class="card-desc">{{ a.description or '' }}</div>
+          <div class="card-footer">
+            <span class="card-source">{{ a.source.name if a.source else '—' }} · {{ a.publishedAt[:10] if a.publishedAt else '' }}</span>
+            <a class="btn-read" href="{{ a.url }}" target="_blank" rel="noopener">READ ▸</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state" style="grid-column:1/-1;">
+        // NO NEWS AVAILABLE //<br><br>
+        <span style="font-size:14px;color:#1a3020;">Configure RSS feeds in app.py</span>
+      </div>
+    {% endif %}
+  </div>
+  
+</div>
+
+<script>
+// Filter functionality
+document.querySelectorAll('.filter-tag').forEach(function(tag) {
+  tag.addEventListener('click', function() {
+    var filter = this.getAttribute('data-filter');
+    
+    // Update active state
+    document.querySelectorAll('.filter-tag').forEach(function(t) {
+      t.classList.remove('active');
+    });
+    this.classList.add('active');
+    
+    // Filter cards
+    document.querySelectorAll('.news-card').forEach(function(card) {
+      var source = card.getAttribute('data-source');
+      if (filter === 'all' || source.includes(filter)) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,407 @@
+{% extends "base.html" %}
+
+{% block title %}ABOUT - PROJECT GATTO{% endblock %}
+
+{% block extra_styles %}
+<style>
+.about-hero {
+  background:linear-gradient(135deg,rgba(0,255,65,.08),rgba(0,255,65,.02));
+  border:1px solid var(--nv); border-radius:2px; padding:40px;
+  margin-bottom:30px; text-align:center; position:relative; overflow:hidden;
+}
+.about-hero::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(0,255,65,.1),transparent 70%);
+  pointer-events:none;
+}
+.hero-title {
+  font-family:var(--font-head); font-size:48px; color:var(--nv);
+  text-shadow:0 0 30px var(--nv); letter-spacing:8px; margin-bottom:12px;
+  position:relative; z-index:1;
+}
+.hero-subtitle {
+  font-family:var(--font-mono); font-size:14px; color:var(--white-dim);
+  letter-spacing:2px; line-height:1.8; max-width:700px; margin:0 auto;
+  position:relative; z-index:1;
+}
+
+.content-grid {
+  display:grid; grid-template-columns:2fr 1fr; gap:30px; margin-bottom:30px;
+}
+@media(max-width:1024px) { .content-grid { grid-template-columns:1fr; } }
+
+.section-block {
+  background:var(--card); border:1px solid var(--border); border-radius:2px;
+  padding:24px; position:relative; overflow:hidden;
+}
+.section-block::after {
+  content:''; position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(0,255,65,.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,65,.02) 1px,transparent 1px);
+  background-size:20px 20px; pointer-events:none;
+}
+
+.section-title {
+  font-family:var(--font-crt); font-size:24px; letter-spacing:3px;
+  color:var(--nv); text-shadow:0 0 10px var(--nv); margin-bottom:20px;
+  border-bottom:1px solid var(--border); padding-bottom:12px;
+  position:relative; z-index:1;
+}
+.section-content {
+  font-family:var(--font-mono); font-size:12px; color:var(--white-dim);
+  line-height:2; position:relative; z-index:1;
+}
+.section-content strong {
+  color:var(--nv); text-shadow:0 0 6px rgba(0,255,65,.3);
+}
+.section-content em {
+  color:var(--amber); font-style:normal;
+}
+
+.feature-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px;
+}
+@media(max-width:768px) { .feature-grid { grid-template-columns:1fr; } }
+
+.feature-card {
+  background:rgba(0,255,65,.03); border:1px solid var(--border);
+  border-radius:2px; padding:16px; transition:all .3s;
+}
+.feature-card:hover {
+  border-color:var(--nv); box-shadow:0 0 15px rgba(0,255,65,.2);
+  transform:translateY(-2px);
+}
+.feature-icon {
+  font-size:32px; margin-bottom:12px;
+}
+.feature-title {
+  font-family:var(--font-mono); font-size:11px; color:var(--amber);
+  letter-spacing:2px; margin-bottom:8px; font-weight:bold;
+}
+.feature-desc {
+  font-family:var(--font-mono); font-size:10px; color:var(--white-dim);
+  line-height:1.6;
+}
+
+.roadmap-timeline {
+  position:relative; padding-left:40px;
+}
+.roadmap-timeline::before {
+  content:''; position:absolute; left:12px; top:0; bottom:0; width:2px;
+  background:linear-gradient(180deg,var(--nv),transparent);
+}
+.roadmap-item {
+  position:relative; margin-bottom:30px;
+}
+.roadmap-dot {
+  position:absolute; left:-28px; top:6px; width:12px; height:12px;
+  border:2px solid var(--nv); border-radius:50%; background:var(--black);
+  box-shadow:0 0 10px var(--nv);
+}
+.roadmap-phase {
+  font-family:var(--font-mono); font-size:9px; color:var(--amber);
+  letter-spacing:2px; margin-bottom:6px;
+}
+.roadmap-title {
+  font-family:var(--font-crt); font-size:18px; color:var(--nv);
+  margin-bottom:8px; letter-spacing:2px;
+}
+.roadmap-desc {
+  font-family:var(--font-mono); font-size:11px; color:var(--white-dim);
+  line-height:1.8;
+}
+.roadmap-status {
+  display:inline-block; margin-top:8px; padding:4px 10px;
+  background:rgba(0,255,65,.1); border:1px solid var(--nv);
+  font-family:var(--font-mono); font-size:9px; color:var(--nv);
+  letter-spacing:1px; border-radius:2px;
+}
+.roadmap-status.pending {
+  background:rgba(255,179,0,.1); border-color:var(--amber); color:var(--amber);
+}
+
+.tokenomics-grid {
+  display:grid; gap:14px;
+}
+.token-row {
+  background:rgba(0,255,65,.03); border:1px solid var(--border);
+  border-radius:2px; padding:14px; display:flex; justify-content:space-between;
+  align-items:center;
+}
+.token-label {
+  font-family:var(--font-mono); font-size:11px; color:var(--amber);
+  letter-spacing:2px;
+}
+.token-value {
+  font-family:var(--font-crt); font-size:20px; color:var(--nv);
+  text-shadow:0 0 10px var(--nv); letter-spacing:2px;
+}
+
+.cta-box {
+  background:linear-gradient(135deg,rgba(255,179,0,.1),rgba(255,179,0,.05));
+  border:2px solid var(--amber); border-radius:2px; padding:24px;
+  text-align:center; margin-top:30px;
+}
+.cta-title {
+  font-family:var(--font-crt); font-size:24px; color:var(--amber);
+  text-shadow:0 0 12px var(--amber); letter-spacing:3px; margin-bottom:16px;
+}
+.btn-cta {
+  display:inline-block; font-family:var(--font-head); font-size:16px;
+  letter-spacing:4px; color:#000;
+  background:linear-gradient(135deg,var(--amber),#ff8800);
+  border:none; border-radius:2px; padding:16px 40px; text-decoration:none;
+  cursor:pointer; transition:all .3s;
+  box-shadow:0 0 30px rgba(255,179,0,.4);
+}
+.btn-cta:hover {
+  box-shadow:0 0 50px rgba(255,179,0,.6); transform:scale(1.05);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main">
+  
+  <!-- Hero Section -->
+  <div class="about-hero">
+    <div class="hero-title">PROJECT GATTO</div>
+    <div class="hero-subtitle">
+      The world's first AI-driven global conflict intelligence platform powered by blockchain technology.
+      Real-time threat monitoring meets decentralized finance.
+    </div>
+  </div>
+  
+  <!-- Main Content -->
+  <div class="content-grid">
+    
+    <!-- Left Column -->
+    <div>
+      
+      <!-- Mission -->
+      <div class="section-block">
+        <div class="section-title">🎯 MISSION</div>
+        <div class="section-content">
+          <p style="margin-bottom:16px;">
+            In an era of unprecedented global instability, <strong>GATTO INTEL</strong> provides real-time, 
+            AI-powered threat analysis to keep investors, traders, and decision-makers ahead of market-moving events.
+          </p>
+          <p style="margin-bottom:16px;">
+            Our proprietary <em>War Index Algorithm</em> monitors conflict zones across the Middle East, 
+            analyzing thousands of intelligence signals from verified OSINT sources to generate actionable risk assessments.
+          </p>
+          <p>
+            <strong>$WNDX</strong> token holders gain exclusive access to advanced analytics, 
+            early signal alerts, and a community of geopolitical intelligence enthusiasts.
+          </p>
+        </div>
+        
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <div class="feature-title">AI-POWERED ANALYSIS</div>
+            <div class="feature-desc">
+              Machine learning models process 10,000+ data points daily to identify emerging threats.
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <div class="feature-title">REAL-TIME ALERTS</div>
+            <div class="feature-desc">
+              Instant notifications when threat levels spike, giving you first-mover advantage.
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">🌍</div>
+            <div class="feature-title">GLOBAL COVERAGE</div>
+            <div class="feature-desc">
+              Monitoring Iran, Israel, Syria, Yemen, Afghanistan, and major maritime chokepoints.
+            </div>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">🔐</div>
+            <div class="feature-title">DECENTRALIZED</div>
+            <div class="feature-desc">
+              Built on blockchain. No censorship. No centralized control. Pure intelligence.
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Roadmap -->
+      <div class="section-block" style="margin-top:30px;">
+        <div class="section-title">🗺️ ROADMAP</div>
+        
+        <div class="roadmap-timeline">
+          <div class="roadmap-item">
+            <div class="roadmap-dot"></div>
+            <div class="roadmap-phase">PHASE 1 — Q1 2025</div>
+            <div class="roadmap-title">FOUNDATION</div>
+            <div class="roadmap-desc">
+              • Launch $WNDX token on Solana<br>
+              • Deploy War Index Algorithm v2.0<br>
+              • Activate Twitter intelligence bot<br>
+              • Launch gatto.xyz terminal
+            </div>
+            <span class="roadmap-status">✅ COMPLETED</span>
+          </div>
+          
+          <div class="roadmap-item">
+            <div class="roadmap-dot"></div>
+            <div class="roadmap-phase">PHASE 2 — Q2 2025</div>
+            <div class="roadmap-title">EXPANSION</div>
+            <div class="roadmap-desc">
+              • Premium subscription tier for advanced analytics<br>
+              • Mobile app (iOS/Android) with push notifications<br>
+              • Partnership with major trading platforms<br>
+              • Launch community DAO governance
+            </div>
+            <span class="roadmap-status pending">🟡 IN PROGRESS</span>
+          </div>
+          
+          <div class="roadmap-item">
+            <div class="roadmap-dot"></div>
+            <div class="roadmap-phase">PHASE 3 — Q3 2025</div>
+            <div class="roadmap-title">INNOVATION</div>
+            <div class="roadmap-desc">
+              • AI prediction markets for geopolitical events<br>
+              • API access for institutional clients<br>
+              • Expand coverage to Asia-Pacific conflicts<br>
+              • Launch GATTO Intelligence NFT collection
+            </div>
+            <span class="roadmap-status pending">🔵 PLANNED</span>
+          </div>
+          
+          <div class="roadmap-item">
+            <div class="roadmap-dot"></div>
+            <div class="roadmap-phase">PHASE 4 — Q4 2025</div>
+            <div class="roadmap-title">ECOSYSTEM</div>
+            <div class="roadmap-desc">
+              • Cross-chain bridge (Ethereum, Base, Arbitrum)<br>
+              • Launch GATTO Intelligence hedge fund<br>
+              • Partner with defense/intelligence agencies<br>
+              • Global media presence & brand recognition
+            </div>
+            <span class="roadmap-status pending">🔵 PLANNED</span>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+    <!-- Right Column -->
+    <div>
+      
+      <!-- Tokenomics -->
+      <div class="section-block">
+        <div class="section-title">💎 TOKENOMICS</div>
+        
+        <div class="tokenomics-grid">
+          <div class="token-row">
+            <span class="token-label">TICKER</span>
+            <span class="token-value">$WNDX</span>
+          </div>
+          
+          <div class="token-row">
+            <span class="token-label">CHAIN</span>
+            <span class="token-value">SOLANA</span>
+          </div>
+          
+          <div class="token-row">
+            <span class="token-label">TOTAL SUPPLY</span>
+            <span class="token-value">1B</span>
+          </div>
+          
+          <div class="token-row">
+            <span class="token-label">INITIAL LP</span>
+            <span class="token-value">LOCKED</span>
+          </div>
+          
+          <div class="token-row">
+            <span class="token-label">TAX</span>
+            <span class="token-value">0%</span>
+          </div>
+        </div>
+        
+        <div class="section-content" style="margin-top:20px;">
+          <p style="margin-bottom:12px;">
+            <strong>Contract Address:</strong><br>
+            <span style="font-size:10px;word-break:break-all;color:var(--nv);">
+              9qLhkx5dpCoPRqg89JASKpkFoVLqTywC2Gsu2XTMpump
+            </span>
+          </p>
+          
+          <p style="margin-bottom:12px;">
+            <strong>Distribution:</strong><br>
+            • 80% Public Sale (Pump.fun)<br>
+            • 10% Development Fund<br>
+            • 5% Marketing<br>
+            • 5% Team (6mo vesting)
+          </p>
+          
+          <p>
+            <em>No presale. No VC allocations. Fair launch for all.</em>
+          </p>
+        </div>
+      </div>
+      
+      <!-- Team -->
+      <div class="section-block" style="margin-top:20px;">
+        <div class="section-title">👥 TEAM</div>
+        <div class="section-content">
+          <p style="margin-bottom:12px;">
+            <strong>GATTO-1</strong> — Lead Developer<br>
+            <span style="font-size:10px;">Former defense intelligence analyst. 8+ years in OSINT.</span>
+          </p>
+          
+          <p style="margin-bottom:12px;">
+            <strong>INTEL-OPS</strong> — AI Engineer<br>
+            <span style="font-size:10px;">PhD in Machine Learning. Built threat detection systems.</span>
+          </p>
+          
+          <p>
+            <strong>ANON-DEV</strong> — Smart Contract Specialist<br>
+            <span style="font-size:10px;">Solidity expert. Audited 50+ DeFi protocols.</span>
+          </p>
+        </div>
+      </div>
+      
+      <!-- Links -->
+      <div class="section-block" style="margin-top:20px;">
+        <div class="section-title">🔗 LINKS</div>
+        <div class="section-content">
+          <p style="margin-bottom:8px;">
+            <strong>Twitter/X:</strong> <a href="#" style="color:var(--nv);">@GattoIntel</a>
+          </p>
+          <p style="margin-bottom:8px;">
+            <strong>Telegram:</strong> <a href="#" style="color:var(--nv);">t.me/gattointel</a>
+          </p>
+          <p style="margin-bottom:8px;">
+            <strong>Discord:</strong> <a href="#" style="color:var(--nv);">discord.gg/gatto</a>
+          </p>
+          <p style="margin-bottom:8px;">
+            <strong>GitHub:</strong> <a href="#" style="color:var(--nv);">github.com/gattointel</a>
+          </p>
+          <p>
+            <strong>Email:</strong> <a href="mailto:contact@thegatto.xyz" style="color:var(--nv);">contact@thegatto.xyz</a>
+          </p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+  <!-- CTA -->
+  <div class="cta-box">
+    <div class="cta-title">JOIN THE INTELLIGENCE REVOLUTION</div>
+    <a href="{{ burn.buy_url }}" target="_blank" rel="noopener" class="btn-cta">
+      BUY $WNDX NOW
+    </a>
+  </div>
+  
+</div>
+{% endblock %}

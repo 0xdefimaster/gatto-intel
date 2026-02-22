@@ -302,14 +302,14 @@
         Score is sum of signal scores for that region, capped to 100.
       #}
       {% set regions = [
-        {"id":"iran",      "name":"IRAN / HORMUZ",    "keys":["iran","hormuz","irgc","tehran","natanz","persian gulf"],  "icon":"☢",  "note":"Nuclear & Naval Activity"},
-        {"id":"israel",    "name":"ISRAEL / GAZA",    "keys":["israel","idf","gaza","netanyahu","hamas","tel aviv"],       "icon":"✈",  "note":"IDF Operations"},
-        {"id":"lebanon",   "name":"LEBANON / HEZBOLLAH","keys":["hezbollah","lebanon","beirut"],                           "icon":"🔶", "note":"Hezbollah Activity"},
-        {"id":"redsea",    "name":"RED SEA / YEMEN",  "keys":["houthi","red sea","yemen","hodeidah"],                       "icon":"🚀", "note":"Houthi Strikes"},
-        {"id":"syria",     "name":"SYRIA / IRAQ",     "keys":["syria","damascus","iraq","baghdad"],                         "icon":"💥", "note":"Cross-border Strikes"},
-        {"id":"ukraine",   "name":"UKRAINE / RUSSIA", "keys":["ukraine","russia","kyiv","moscow","putin","zelensky"],     "icon":"⚔",  "note":"Active War Zone"},
-        {"id":"persian",   "name":"PERSIAN GULF",     "keys":["carrier","warship","hormuz","gulf","naval","centcom"],     "icon":"⚓", "note":"Naval Movements"},
-        {"id":"pakistan",  "name":"PAK / AFGHAN",     "keys":["pakistan","afghanistan","taliban","kabul"],                  "icon":"⚠",  "note":"Border Activity"},
+        {"id":"iran",      "name":"IRAN / HORMUZ",    "kws":["iran","hormuz","irgc","tehran","natanz","persian gulf"],  "icon":"☢",  "note":"Nuclear & Naval Activity"},
+        {"id":"israel",    "name":"ISRAEL / GAZA",    "kws":["israel","idf","gaza","netanyahu","hamas","tel aviv"],       "icon":"✈",  "note":"IDF Operations"},
+        {"id":"lebanon",   "name":"LEBANON / HEZBOLLAH","kws":["hezbollah","lebanon","beirut"],                           "icon":"🔶", "note":"Hezbollah Activity"},
+        {"id":"redsea",    "name":"RED SEA / YEMEN",  "kws":["houthi","red sea","yemen","hodeidah"],                       "icon":"🚀", "note":"Houthi Strikes"},
+        {"id":"syria",     "name":"SYRIA / IRAQ",     "kws":["syria","damascus","iraq","baghdad"],                         "icon":"💥", "note":"Cross-border Strikes"},
+        {"id":"ukraine",   "name":"UKRAINE / RUSSIA", "kws":["ukraine","russia","kyiv","moscow","putin","zelensky"],     "icon":"⚔",  "note":"Active War Zone"},
+        {"id":"persian",   "name":"PERSIAN GULF",     "kws":["carrier","warship","hormuz","gulf","naval","centcom"],     "icon":"⚓", "note":"Naval Movements"},
+        {"id":"pakistan",  "name":"PAK / AFGHAN",     "kws":["pakistan","afghanistan","taliban","kabul"],                  "icon":"⚠",  "note":"Border Activity"},
       ] %}
 
       <div class="region-grid">
@@ -317,7 +317,7 @@
         {% set ns = namespace(count=0, score=0) %}
         {% for sig in intel_sources %}
           {% set txt = (sig.text ~ " " ~ sig.title)|lower %}
-          {% if region.keys | select("in", txt) | list | length > 0 %}
+          {% if region.kws | select("in", txt) | list | length > 0 %}
             {% set ns.count = ns.count + 1 %}
             {% set ns.score = ns.score + sig.score %}
           {% endif %}

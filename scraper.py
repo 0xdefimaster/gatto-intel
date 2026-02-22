@@ -132,7 +132,7 @@ def fetch_rss(url: str, label: str, limit: int = 10) -> list:
     }
     try:
         # SSL hatalarını ve timeout'ları yönetmek için verify=False ve timeout=12
-        resp = requests.get(url, headers=headers, timeout=12, verify=False)
+        resp = requests.get(url, headers=headers, timeout=5, verify=False)
         resp.raise_for_status()
         
         # XML Ayrıştırma
@@ -178,7 +178,7 @@ def _check_nitter_alive() -> bool:
     for instance in NITTER_INSTANCES:
         try:
             url = f"{instance.rstrip('/')}/sentdefender/rss"
-            r = requests.get(url, timeout=8, verify=False,
+            r = requests.get(url, timeout=3, verify=False,
                              headers={"User-Agent": "Mozilla/5.0"})
             if r.status_code == 200 and b"<rss" in r.content[:300]:
                 print(f"[✓] Nitter aktif: {instance}")
@@ -267,7 +267,7 @@ def calculate_war_index(per_account_limit: int = 15) -> tuple:
     # En yeni sinyalleri üstte göster
     signals.sort(key=lambda x: x["timestamp"], reverse=True)
 
-    SCORE_CEILING = 1000
+    SCORE_CEILING = 600
     bar_pct = min(int(total_score / SCORE_CEILING * 100), 100)
     
     for s in signals:

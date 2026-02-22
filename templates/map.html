@@ -218,7 +218,7 @@ html, body { height: 100%; }
       <div class="legend-hdr">[ EVENTS ] <span class="ev-count">{{ map_events|length }}</span></div>
       <div class="ev-list" id="ev-list">
         {% if map_events %}
-          {% for ev in map_events | sort(attribute='score', reverse=True) %}
+          {% for ev in map_events | sort(attribute='timestamp', reverse=True) %}
           <div class="ev-item" id="ev-{{ loop.index0 }}" onclick="flyToEvent({{ loop.index0 }})">
             <div class="ev-top">
               <span class="ev-region">{{ ev.symbol }} {{ ev.region }}</span>
@@ -542,7 +542,7 @@ function applyFilters() {
 function renderList(events) {
   var list = document.getElementById('ev-list');
   if (!events.length) { list.innerHTML='<div class="no-ev">// NO GEO EVENTS //</div>'; return; }
-  list.innerHTML = events.slice().sort(function(a,b){return b.score-a.score;}).map(function(ev) {
+  list.innerHTML = events.slice().sort(function(a,b){return b.timestamp-a.timestamp;}).map(function(ev) {
     var meta  = ICON_META[ev.type]||{};
     var idx   = EVENTS.indexOf(ev);
     var short = ev.title.length>85 ? ev.title.slice(0,82)+'…' : ev.title;

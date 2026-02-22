@@ -242,329 +242,194 @@ html, body { height: 100%; }
 {% block extra_scripts %}
 <script src="https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.js"></script>
 <script>
+// ─────────────────────────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────────────────────────
 var EVENTS    = {{ map_events | tojson }};
 var ICON_META = {{ icon_meta  | tojson }};
 
-// ══════════════════════════════════════════
-//  MILITARY ASSETS
-//  Kaynak: @EGYOSINT OSINT infographic (Jan 2025) + USNI/NavyTimes
-//  /api/mil-assets endpoint'inden otomatik güncellenir (5 dk)
-//  Fallback: aşağıdaki statik veriler
-// ══════════════════════════════════════════
-var MIL_ASSETS = [
+// Askeri varlıklar — başlangıç verisi (API'den güncellenir)
+var MIL_ASSETS = {{ mil_assets | tojson }};
 
-  // ══ CARRIERS / CSG ══
-  // Abraham Lincoln CSG — Arabian Sea
-  { id:'cvn-72', name:'USS Abraham Lincoln (CVN-72)', cls:'carrier',
-    lat:22.0, lng:62.0,
-    status:'Abraham Lincoln CSG — Arabian Sea. CSG deployed vs Iran threat.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'⛵' },
-  { id:'ddg-119', name:'USS Frank E. Petersen Jr. (DDG-119)', cls:'escort',
-    lat:22.2, lng:62.3,
-    status:'Escort — Abraham Lincoln CSG. Arabian Sea.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🚢' },
-  { id:'ddg-101', name:'USS Gridley (DDG-101)', cls:'escort',
-    lat:21.8, lng:61.8,
-    status:'Escort — Abraham Lincoln CSG. Arabian Sea.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🚢' },
-  { id:'ddg-112', name:'USS Michael Murphy (DDG-112)', cls:'escort',
-    lat:22.4, lng:62.5,
-    status:'Escort — Abraham Lincoln CSG. Arabian Sea.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🚢' },
-
-  // Gerald R. Ford CSG — On Deployment (Eastern Med / transitioning)
-  { id:'cvn-78', name:'USS Gerald R. Ford (CVN-78)', cls:'carrier',
-    lat:35.5, lng:28.0,
-    status:'Gerald R. Ford CSG — On Deployment. Eastern Mediterranean.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'⛵' },
-  { id:'ddg-81', name:'USS Winston S. Churchill (DDG-81)', cls:'escort',
-    lat:35.7, lng:28.2,
-    status:'Escort — Gerald R. Ford CSG.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🚢' },
-  { id:'ddg-96', name:'USS Bainbridge (DDG-96)', cls:'escort',
-    lat:35.3, lng:27.8,
-    status:'Escort — Gerald R. Ford CSG.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🚢' },
-  { id:'ddg-72', name:'USS Mahan (DDG-72)', cls:'escort',
-    lat:35.6, lng:28.4,
-    status:'Escort — Gerald R. Ford CSG.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🚢' },
-
-  // Other ME assets
-  { id:'cvn-71', name:'USS Theodore Roosevelt (CVN-71)', cls:'carrier',
-    lat:33.5, lng:26.0,
-    status:'Mediterranean Sea. Other ME naval presence.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'⛵' },
-  { id:'cg-70', name:'USS Lake Erie (CG-70) / McFaul', cls:'escort',
-    lat:26.5, lng:56.5,
-    status:'USS McFaul — Persian Gulf. Presence ops.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🚢' },
-  { id:'ddg-54', name:'USS Curtis Wilbur / Mitscher', cls:'escort',
-    lat:27.0, lng:57.0,
-    status:'USS Mitscher — Persian Gulf.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🚢' },
-  { id:'ddg-109', name:'USS Jason Dunham / Delbert Black', cls:'escort',
-    lat:15.5, lng:42.5,
-    status:'USS Delbert D. Black — Red Sea.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🚢' },
-
-  // Ohio-class SSBN — unknown / Persian Gulf area
-  { id:'ssbn-ohio', name:'Ohio-class SSBN (unknown)', cls:'submarine',
-    lat:24.0, lng:58.0,
-    status:'Ohio-class — location unknown. Likely Arabian Sea/Persian Gulf area per OSINT.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🔱' },
-
-  // ══ AIR ASSETS / BASES ══
-  // Muwaffaq Salti AB (Jordan) — F-15E, F-35A, A-10, KC-135
-  { id:'base-muwaffaq', name:'Muwaffaq Salti AB (Jordan)', cls:'base',
-    lat:32.2, lng:36.8,
-    status:'A-10 Thunderbolt II det. + 24× F-15E Strike Eagle + 30× F-35A fighters deployed. KC-135 & KC-46 tankers (20-22x).',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🔺' },
-
-  // Prince Sultan AB (Saudi Arabia) — E-11A BACN
-  { id:'base-psab', name:'Prince Sultan AB (Saudi Arabia)', cls:'base',
-    lat:24.1, lng:47.6,
-    status:'3× E-11A BACN (Battlefield Airborne Comms Node). F-16 deployment at UAE/KSA.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🔺' },
-
-  // Al Dhafra AB (UAE) — F-16
-  { id:'base-aldhafra', name:'Al Dhafra AB (UAE)', cls:'base',
-    lat:24.2, lng:54.5,
-    status:'F-16 deployed at UAE & KSA. 6× EA-18G Growler from Muwaffaq Salti AB.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🔺' },
-
-  // Al Udeid AB (Qatar) — CENTCOM HQ
-  { id:'base-aludeid', name:'Al Udeid AB (Qatar)', cls:'base',
-    lat:25.1, lng:51.3,
-    status:'USAF CENTCOM FWD HQ. THAAD battery deployed (at least 1 additional battery KSA or Qatar). MIM-104 Patriot multiple batteries across region.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🔺' },
-
-  // Chania / Souda Bay (Greece) — RC-135
-  { id:'base-chania', name:'Souda Bay / Chania (Greece)', cls:'base',
-    lat:35.5, lng:24.1,
-    status:'1× RC-135 SIGINT operating from Chania, Greece.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🔺' },
-
-  // Midenhall (UK) — WC-135 + E-3 Sentry
-  { id:'base-mildenhall', name:'RAF Mildenhall (UK)', cls:'base',
-    lat:52.4, lng:0.5,
-    status:'WC-135 "Nuke Sniffer" deployed. 2× E-3 Sentry AWACS. ~160 C-17 flights since Jan 16.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🔺' },
-
-  // Diego Garcia — C-5M / C-17 / B-2
-  { id:'base-dg', name:'Diego Garcia (BIOT)', cls:'base',
-    lat:-7.3, lng:72.4,
-    status:'18× C-5M flights + C-130H/J. 4× MC/HC-130J (2x here). B-2 Spirit forward deployment hub. Critical Indian Ocean base.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🔺' },
-
-  // RAF Fairford (UK) — B-52
-  { id:'base-fairford', name:'RAF Fairford (UK)', cls:'base',
-    lat:51.7, lng:-1.8,
-    status:'B-52H Stratofortress rotational deployment. NATO deterrence.',
-    source:'@EGYOSINT / USAF', date:'2025-01-18', symbol:'🔺' },
-
-  // Djibouti — Camp Lemonnier
-  { id:'base-djibouti', name:'Camp Lemonnier (Djibouti)', cls:'base',
-    lat:11.5, lng:43.1,
-    status:'CJTF-HOA / AFRICOM hub. Drone + ISR ops. Gulf of Aden access.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🔺' },
-
-  // THAAD — KSA/Qatar (approx)
-  { id:'thaad-ksa', name:'THAAD Battery (KSA/Qatar)', cls:'air-defense',
-    lat:25.3, lng:49.8,
-    status:'At least 1 additional THAAD battery deployed to KSA or Qatar. MIM-104 Patriot multiple batteries across region.',
-    source:'@EGYOSINT', date:'2025-01-18', symbol:'🛡' },
-
-  // İncirlik — NATO nuclear
-  { id:'base-incirlik', name:'İncirlik AB (Turkey)', cls:'base',
-    lat:37.0, lng:35.4,
-    status:'USAF 39th ABW. B61 nuclear weapons (NATO dual-key). Possible asset staging.',
-    source:'NATO/USAF', date:'2025-01-18', symbol:'🔺' },
-];
-
-// Color per class
 var MIL_COLORS = {
-  carrier:    '#00ccff',
-  escort:     '#0088aa',
-  bomber:     '#ffdd00',
-  submarine:  '#cc44ff',
-  base:       '#ff6600',
-  'air-defense': '#ff3399',
+  carrier:      '#00ccff',
+  escort:       '#0077aa',
+  bomber:       '#ffdd00',
+  submarine:    '#cc44ff',
+  base:         '#ff6600',
+  'air-defense':'#ff3399',
 };
 
-// Visibility toggles — add escort + air-defense
-var milVisible = { carrier:true, escort:true, bomber:true, submarine:true, base:true, 'air-defense':true };
-
-// Color per class
-var MIL_COLORS = {
-  carrier:   '#00ccff',
-  bomber:    '#ffdd00',
-  submarine: '#cc44ff',
-  base:      '#ff6600',
+var milVisible = {
+  carrier:true, escort:true, bomber:true,
+  submarine:true, base:true, 'air-defense':true
 };
 
-// Visibility toggles
-var milVisible = { carrier: true, bomber: true, submarine: true, base: true };
-
-// ══════════════════════════════════════════
-//  MAP INIT — dark style, no API key needed
-// ══════════════════════════════════════════
+// ─────────────────────────────────────────────────────────────
+//  MAP INIT
+// ─────────────────────────────────────────────────────────────
+// map.html içindeki Map init kısmını bul ve değiştir:
 var map = new maplibregl.Map({
-  container: 'map',
-  // OpenFreeMap liberty dark style — free, no API key
-  style: 'https://tiles.openfreemap.org/styles/liberty',
-  center: [42, 28],
-  zoom: 3,
-  minZoom: 1.5,
-  maxZoom: 14,
-  attributionControl: false,
+    container: 'map',
+    // Eğer OpenFreeMap çalışmıyorsa bu alternatif bir stil (örneğin maptiler veya doğrudan OSM):
+    style: 'https://demotiles.maplibre.org/style.json', 
+    center: [42, 28],
+    zoom: 3,
+    // ... diğer ayarlar
 });
 
-map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-left');
+map.addControl(new maplibregl.NavigationControl({ showCompass:false }), 'bottom-left');
 
-// ── Dark CSS filter on the map canvas ──
-map.on('load', function() {
-  // Darken & tint map canvas to match our theme
-  var canvas = map.getCanvas();
-  canvas.style.filter = 'brightness(0.28) saturate(0.3) hue-rotate(100deg) contrast(1.2)';
-
-  // ── Add event markers as GeoJSON ──
-  var geojson = {
+// ─────────────────────────────────────────────────────────────
+//  GEOJSON BUILDERS
+// ─────────────────────────────────────────────────────────────
+function buildEventGeoJSON(evs) {
+  return {
     type: 'FeatureCollection',
-    features: EVENTS.map(function(ev, idx) {
+    features: evs.map(function(ev, i) {
       return {
         type: 'Feature',
-        geometry: { type: 'Point', coordinates: [ev.lng, ev.lat] },
+        geometry: { type:'Point', coordinates:[ev.lng, ev.lat] },
         properties: {
-          idx:    idx,
-          region: ev.region,
-          type:   ev.type,
-          score:  ev.score,
-          title:  ev.title,
-          account:ev.account,
-          color:  ev.color,
-          symbol: ev.symbol || '●',
-          label:  ev.label  || ev.type,
+          idx:    EVENTS.indexOf(ev),
+          region: ev.region, type:  ev.type,
+          score:  ev.score,  title: ev.title,
+          account:ev.account,color: ev.color,
+          symbol: ev.symbol||'●', label: ev.label||ev.type,
           radius: Math.round(6 + ev.score * 1.4),
         }
       };
     })
   };
+}
 
-  // Pulse / outer ring layer
-  map.addSource('events', { type: 'geojson', data: geojson });
+function buildMilGeoJSON(vis) {
+  return {
+    type: 'FeatureCollection',
+    features: MIL_ASSETS
+      .filter(function(a) { return vis[a.cls] !== false; })
+      .map(function(a) {
+        return {
+          type: 'Feature',
+          geometry: { type:'Point', coordinates:[a.lng, a.lat] },
+          properties: {
+            id:     a.id,     name:   a.name,   cls:    a.cls,
+            status: a.status, source: a.source, date:   a.date,
+            symbol: a.symbol||'●',
+            color:  MIL_COLORS[a.cls] || '#00ccff',
+            radius: a.cls==='carrier'?16 : a.cls==='bomber'?14 : a.cls==='submarine'?13 : 11,
+          }
+        };
+      })
+  };
+}
 
-  // Glow halo
-  map.addLayer({
-    id: 'event-halo',
-    type: 'circle',
-    source: 'events',
-    paint: {
-      'circle-radius':       ['get', 'radius'],
-      'circle-color':        ['get', 'color'],
-      'circle-opacity':      0.12,
-      'circle-blur':         1,
-      'circle-stroke-width': 0,
-    }
-  });
+// ─────────────────────────────────────────────────────────────
+//  MAP LOAD — tüm layer'lar burada ekleniyor
+// ─────────────────────────────────────────────────────────────
+map.on('load', function() {
+  map.getCanvas().style.filter = 'brightness(0.58) saturate(0.3) hue-rotate(100deg) contrast(1.2)';
 
-  // Outer ring
-  map.addLayer({
-    id: 'event-ring',
-    type: 'circle',
-    source: 'events',
-    paint: {
-      'circle-radius':        ['get', 'radius'],
-      'circle-color':         'transparent',
-      'circle-stroke-color':  ['get', 'color'],
-      'circle-stroke-width':  1.5,
-      'circle-stroke-opacity': 0.7,
-    }
-  });
+  // ── EVENT LAYERS ──────────────────────────────
+  map.addSource('events', { type:'geojson', data:buildEventGeoJSON(EVENTS) });
 
-  // Inner dot
-  map.addLayer({
-    id: 'event-dot',
-    type: 'circle',
-    source: 'events',
-    paint: {
-      'circle-radius': ['*', ['get', 'radius'], 0.4],
-      'circle-color':  ['get', 'color'],
-      'circle-opacity': 0.95,
-      'circle-stroke-color': '#000',
-      'circle-stroke-width': 0.5,
-    }
-  });
+  map.addLayer({ id:'event-halo', type:'circle', source:'events',
+    paint:{ 'circle-radius':['get','radius'], 'circle-color':['get','color'],
+            'circle-opacity':0.12, 'circle-blur':1, 'circle-stroke-width':0 }});
 
-  // Pulse animation via radius interpolation
-  var start = null;
-  function animatePulse(ts) {
-    if (!start) start = ts;
-    var t = ((ts - start) % 2400) / 2400; // 0–1 cycle
-    var pulse = Math.sin(t * Math.PI); // 0 → 1 → 0
-    map.setPaintProperty('event-ring', 'circle-radius',
-      ['*', ['get', 'radius'], 1 + pulse * 0.9]);
-    map.setPaintProperty('event-ring', 'circle-stroke-opacity', 0.9 - pulse * 0.85);
-    requestAnimationFrame(animatePulse);
+  map.addLayer({ id:'event-ring', type:'circle', source:'events',
+    paint:{ 'circle-radius':['get','radius'], 'circle-color':'transparent',
+            'circle-stroke-color':['get','color'], 'circle-stroke-width':1.5,
+            'circle-stroke-opacity':0.7 }});
+
+  map.addLayer({ id:'event-dot', type:'circle', source:'events',
+    paint:{ 'circle-radius':['*',['get','radius'],0.4], 'circle-color':['get','color'],
+            'circle-opacity':0.95, 'circle-stroke-color':'#000', 'circle-stroke-width':0.5 }});
+
+  // Event pulse animation
+  var evStart = null;
+  function animateEvents(ts) {
+    if (!evStart) evStart = ts;
+    var pulse = Math.sin(((ts-evStart) % 2400) / 2400 * Math.PI);
+    map.setPaintProperty('event-ring','circle-radius',['*',['get','radius'],1+pulse*0.9]);
+    map.setPaintProperty('event-ring','circle-stroke-opacity',0.9-pulse*0.85);
+    requestAnimationFrame(animateEvents);
   }
-  requestAnimationFrame(animatePulse);
+  requestAnimationFrame(animateEvents);
 
-  // ══════════════════════════════════════════
-  //  MILITARY ASSETS LAYERS
-  // ══════════════════════════════════════════
-  function buildMilGeoJSON(vis) {
-    return {
-      type: 'FeatureCollection',
-      features: MIL_ASSETS
-        .filter(function(a) { return vis[a.cls] !== false; })
-        .map(function(a) {
-          return {
-            type: 'Feature',
-            geometry: { type: 'Point', coordinates: [a.lng, a.lat] },
-            properties: {
-              id:     a.id,   name:   a.name,   cls:    a.cls,
-              status: a.status, source: a.source, date: a.date,
-              symbol: a.symbol, color: MIL_COLORS[a.cls] || '#00ccff',
-              radius: a.cls==='carrier' ? 16 : a.cls==='bomber' ? 14 : a.cls==='submarine' ? 13 : 11,
-            }
-          };
-        })
-    };
-  }
+  // Event click → popup
+  ['event-dot','event-ring'].forEach(function(lyr) {
+    map.on('click', lyr, function(e) {
+      var p = e.features[0].properties;
+      var meta = ICON_META[p.type] || {};
+      new maplibregl.Popup({ closeButton:true, maxWidth:'290px' })
+        .setLngLat(e.features[0].geometry.coordinates)
+        .setHTML(
+          '<div class="popup-inner">' +
+            '<div class="popup-region">'+(p.symbol||'●')+' '+p.region+'</div>' +
+            '<div class="popup-type">'+(meta.label||p.type)+'</div>' +
+            '<div class="popup-text">'+p.title+'</div>' +
+            '<div class="popup-foot">' +
+              '<span class="popup-src">@'+p.account+'</span>' +
+              '<span class="popup-score">SCORE: '+p.score+'</span>' +
+            '</div></div>'
+        ).addTo(map);
+      sideHighlight(p.idx);
+    });
+    map.on('mouseenter', lyr, function() { map.getCanvas().style.cursor='pointer'; });
+    map.on('mouseleave', lyr, function() { map.getCanvas().style.cursor='crosshair'; });
+  });
 
-  map.addSource('mil-assets', { type: 'geojson', data: buildMilGeoJSON(milVisible) });
+  // ── MILITARY LAYERS ──────────────────────────
+  map.addSource('mil-assets', { type:'geojson', data:buildMilGeoJSON(milVisible) });
 
   map.addLayer({ id:'mil-halo', type:'circle', source:'mil-assets',
-    paint: { 'circle-radius':['get','radius'], 'circle-color':['get','color'], 'circle-opacity':0.08, 'circle-blur':0.8 }
-  });
+    paint:{ 'circle-radius':['get','radius'], 'circle-color':['get','color'],
+            'circle-opacity':0.09, 'circle-blur':0.8 }});
+
   map.addLayer({ id:'mil-ring', type:'circle', source:'mil-assets',
-    paint: { 'circle-radius':['get','radius'], 'circle-color':'transparent',
-             'circle-stroke-color':['get','color'], 'circle-stroke-width':1.8, 'circle-stroke-opacity':0.8 }
-  });
+    paint:{ 'circle-radius':['get','radius'], 'circle-color':'transparent',
+            'circle-stroke-color':['get','color'], 'circle-stroke-width':1.8,
+            'circle-stroke-opacity':0.85 }});
+
   map.addLayer({ id:'mil-dot', type:'circle', source:'mil-assets',
-    paint: { 'circle-radius':['*',['get','radius'],0.45], 'circle-color':['get','color'],
-             'circle-opacity':1, 'circle-stroke-color':'#000', 'circle-stroke-width':1 }
-  });
-  map.addLayer({ id:'mil-label', type:'symbol', source:'mil-assets',
-    layout: { 'text-field':['get','symbol'], 'text-size':11, 'text-anchor':'center',
-              'text-allow-overlap':true, 'text-ignore-placement':true },
-    paint:  { 'text-color':['get','color'], 'text-halo-color':'#000', 'text-halo-width':1 }
+    paint:{ 'circle-radius':['*',['get','radius'],0.45], 'circle-color':['get','color'],
+            'circle-opacity':1, 'circle-stroke-color':'#000', 'circle-stroke-width':1 }});
+
+  map.addLayer({ 
+    id: 'mil-label', 
+    type: 'symbol', 
+    source: 'mil-assets',
+    layout: { 
+      'text-field': ['get', 'symbol'], // Toggle butonundaki emojiyi çeker
+      'text-size': 16,                 // Biraz büyüttük ki net görünsün
+      'text-anchor': 'center',
+      'text-allow-overlap': true, 
+      'text-ignore-placement': true,
+      // BURASI ÖNEMLİ: Font paketini 'klasik' fontlara çeviriyoruz
+      'text-font': ['literal', ['Open Sans Regular', 'Arial Unicode MS Regular']]
+    },
+    paint: { 
+      'text-color': ['get', 'color'], 
+      'text-halo-color': '#000', 
+      'text-halo-width': 1 
+    }
   });
 
-  // Slow pulse for military assets
+  // Military pulse animation (slower: 3.6s)
   var milStart = null;
   function animateMil(ts) {
     if (!milStart) milStart = ts;
-    var pulse = Math.sin(((ts - milStart) % 3600) / 3600 * Math.PI);
+    var pulse = Math.sin(((ts-milStart) % 3600) / 3600 * Math.PI);
     if (map.getLayer('mil-ring')) {
-      map.setPaintProperty('mil-ring','circle-radius',['*',['get','radius'], 1 + pulse * 0.6]);
-      map.setPaintProperty('mil-ring','circle-stroke-opacity', 0.85 - pulse * 0.7);
+      map.setPaintProperty('mil-ring','circle-radius',['*',['get','radius'],1+pulse*0.6]);
+      map.setPaintProperty('mil-ring','circle-stroke-opacity',0.85-pulse*0.7);
     }
     requestAnimationFrame(animateMil);
   }
   requestAnimationFrame(animateMil);
 
-  // Click → military popup
+  // Military click → popup
   ['mil-dot','mil-ring'].forEach(function(lyr) {
     map.on('click', lyr, function(e) {
       var p = e.features[0].properties;
@@ -572,76 +437,63 @@ map.on('load', function() {
         .setLngLat(e.features[0].geometry.coordinates)
         .setHTML(
           '<div class="mil-popup-inner">' +
-            '<div class="mil-popup-name">'  + p.symbol + ' ' + p.name + '</div>' +
-            '<div class="mil-popup-class">' + p.cls.toUpperCase() + ' ASSET</div>' +
-            '<div class="mil-popup-text">'  + p.status + '</div>' +
+            '<div class="mil-popup-name">'+(p.symbol||'●')+' '+p.name+'</div>' +
+            '<div class="mil-popup-class">'+p.cls.toUpperCase()+' ASSET</div>' +
+            '<div class="mil-popup-text">'+p.status+'</div>' +
             '<div class="mil-popup-foot">' +
-              '<span class="mil-popup-src">SRC: '  + p.source + '</span>' +
-              '<span class="mil-popup-date">'       + p.date   + '</span>' +
+              '<span class="mil-popup-src">SRC: '+p.source+'</span>' +
+              '<span class="mil-popup-date">'+p.date+'</span>' +
             '</div></div>'
         ).addTo(map);
     });
-    map.on('mouseenter', lyr, function() { map.getCanvas().style.cursor = 'pointer'; });
-    map.on('mouseleave', lyr, function() { map.getCanvas().style.cursor = 'crosshair'; });
+    map.on('mouseenter', lyr, function() { map.getCanvas().style.cursor='pointer'; });
+    map.on('mouseleave', lyr, function() { map.getCanvas().style.cursor='crosshair'; });
   });
 
-  // Expose refresh fn
+  // ── Refresh helpers (auto-refresh'in çağıracağı fonksiyonlar) ──
   window._refreshMil = function() {
-    if (map.getSource('mil-assets')) map.getSource('mil-assets').setData(buildMilGeoJSON(milVisible));
+    var src = map.getSource('mil-assets');
+    if (src) src.setData(buildMilGeoJSON(milVisible));
   };
-  ['event-dot', 'event-ring'].forEach(function(layerId) {
-    map.on('click', layerId, function(e) {
-      var p = e.features[0].properties;
-      var meta = ICON_META[p.type] || {};
-      new maplibregl.Popup({ closeButton: true, maxWidth: '290px' })
-        .setLngLat(e.features[0].geometry.coordinates)
-        .setHTML(
-          '<div class="popup-inner">' +
-            '<div class="popup-region">' + (p.symbol || '●') + ' ' + p.region + '</div>' +
-            '<div class="popup-type">'   + (p.label  || p.type) + '</div>' +
-            '<div class="popup-text">'   + p.title + '</div>' +
-            '<div class="popup-foot">' +
-              '<span class="popup-src">@' + p.account + '</span>' +
-              '<span class="popup-score">SCORE: ' + p.score + '</span>' +
-            '</div>' +
-          '</div>'
-        )
-        .addTo(map);
-      sideHighlight(p.idx);
-    });
+  window._refreshEvents = function() {
+    var src = map.getSource('events');
+    if (src) src.setData(buildEventGeoJSON(EVENTS));
+  };
 
-    map.on('mouseenter', layerId, function() { map.getCanvas().style.cursor = 'pointer'; });
-    map.on('mouseleave', layerId, function() { map.getCanvas().style.cursor = 'crosshair'; });
-  });
+
+  
+
+  // ── Auto-refresh BAŞLATILIYOR (map.on load içinde — layerlar hazır) ──
+  startAutoRefresh();
 });
 
-// ══════════════════════════════════════════
-//  MILITARY TOGGLE
-// ══════════════════════════════════════════
+// ─────────────────────────────────────────────────────────────
+//  TOGGLE MIL
+// ─────────────────────────────────────────────────────────────
 function toggleMil(btn, cls) {
   milVisible[cls] = !milVisible[cls];
   btn.classList.toggle('on', milVisible[cls]);
   if (window._refreshMil) window._refreshMil();
 }
 
-// ══════════════════════════════════════════
-//  FLY TO EVENT
-// ══════════════════════════════════════════
+// ─────────────────────────────────────────────────────────────
+//  FLY / HIGHLIGHT
+// ─────────────────────────────────────────────────────────────
 function flyToEvent(idx) {
   var ev = EVENTS[idx]; if (!ev) return;
-  map.flyTo({ center: [ev.lng, ev.lat], zoom: 7, duration: 1400, essential: true });
+  map.flyTo({ center:[ev.lng, ev.lat], zoom:7, duration:1400, essential:true });
   sideHighlight(idx);
 }
 
 function sideHighlight(idx) {
   document.querySelectorAll('.ev-item').forEach(function(el) { el.classList.remove('active'); });
-  var el = document.getElementById('ev-' + idx);
-  if (el) { el.classList.add('active'); el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+  var el = document.getElementById('ev-'+idx);
+  if (el) { el.classList.add('active'); el.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
 }
 
-// ══════════════════════════════════════════
+// ─────────────────────────────────────────────────────────────
 //  FILTER BAR
-// ══════════════════════════════════════════
+// ─────────────────────────────────────────────────────────────
 var activeFilters = new Set();
 var fb = document.getElementById('filter-bar');
 
@@ -651,63 +503,49 @@ allBtn.addEventListener('click', function() {
   activeFilters.clear();
   document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('on'); });
   allBtn.classList.add('on');
-  if (map.getSource('events')) {
-    map.getSource('events').setData(buildGeoJSON(EVENTS));
-  }
+  if (window._refreshEvents) window._refreshEvents();
   renderList(EVENTS);
 });
 fb.appendChild(allBtn);
 
 var typesPresent = [];
-EVENTS.forEach(function(ev) { if (typesPresent.indexOf(ev.type) === -1) typesPresent.push(ev.type); });
+EVENTS.forEach(function(ev) { if (typesPresent.indexOf(ev.type)===-1) typesPresent.push(ev.type); });
 typesPresent.forEach(function(type) {
   var meta = ICON_META[type] || {};
   var btn = document.createElement('button');
   btn.className = 'filter-btn';
-  btn.textContent = (meta.symbol || '●') + ' ' + type.toUpperCase();
+  btn.textContent = (meta.symbol||'●')+' '+type.toUpperCase();
   btn.addEventListener('click', function() {
     allBtn.classList.remove('on');
     activeFilters.has(type) ? (activeFilters.delete(type), btn.classList.remove('on'))
                             : (activeFilters.add(type),    btn.classList.add('on'));
-    if (activeFilters.size === 0) allBtn.classList.add('on');
+    if (activeFilters.size===0) allBtn.classList.add('on');
     applyFilters();
   });
   fb.appendChild(btn);
 });
 
 function applyFilters() {
-  var filtered = activeFilters.size === 0
+  var filtered = activeFilters.size===0
     ? EVENTS
     : EVENTS.filter(function(ev) { return activeFilters.has(ev.type); });
-  if (map.getSource('events')) map.getSource('events').setData(buildGeoJSON(filtered));
+  if (window._refreshEvents) {
+    var src = map.getSource('events');
+    if (src) src.setData(buildEventGeoJSON(filtered));
+  }
   renderList(filtered);
 }
 
-function buildGeoJSON(evs) {
-  return {
-    type: 'FeatureCollection',
-    features: evs.map(function(ev, i) {
-      return {
-        type: 'Feature',
-        geometry: { type: 'Point', coordinates: [ev.lng, ev.lat] },
-        properties: {
-          idx: EVENTS.indexOf(ev), region: ev.region, type: ev.type,
-          score: ev.score, title: ev.title, account: ev.account,
-          color: ev.color, symbol: ev.symbol||'●', label: ev.label||ev.type,
-          radius: Math.round(6 + ev.score * 1.4),
-        }
-      };
-    })
-  };
-}
-
+// ─────────────────────────────────────────────────────────────
+//  RENDER EVENT LIST
+// ─────────────────────────────────────────────────────────────
 function renderList(events) {
   var list = document.getElementById('ev-list');
-  if (!events.length) { list.innerHTML = '<div class="no-ev">// NO GEO EVENTS //</div>'; return; }
-  list.innerHTML = events.slice().sort(function(a,b){ return b.score-a.score; }).map(function(ev) {
-    var meta = ICON_META[ev.type] || {};
-    var idx  = EVENTS.indexOf(ev);
-    var short = ev.title.length > 85 ? ev.title.slice(0,82)+'…' : ev.title;
+  if (!events.length) { list.innerHTML='<div class="no-ev">// NO GEO EVENTS //</div>'; return; }
+  list.innerHTML = events.slice().sort(function(a,b){return b.score-a.score;}).map(function(ev) {
+    var meta  = ICON_META[ev.type]||{};
+    var idx   = EVENTS.indexOf(ev);
+    var short = ev.title.length>85 ? ev.title.slice(0,82)+'…' : ev.title;
     return '<div class="ev-item" id="ev-'+idx+'" onclick="flyToEvent('+idx+')">' +
       '<div class="ev-top"><span class="ev-region">'+(meta.symbol||'●')+' '+ev.region+'</span>' +
       '<span class="ev-score">['+ev.score+']</span></div>' +
@@ -716,75 +554,51 @@ function renderList(events) {
   }).join('');
 }
 
-// ══════════════════════════════════════════
-//  AUTO-REFRESH — /api/mil-assets her 5 dkda bir
-//  Flask route: @app.route('/api/mil-assets')
-//  return jsonify(mil_assets_list)
-//  Her asset: {id, name, cls, lat, lng, status, source, date, symbol}
-// ══════════════════════════════════════════
-var MIL_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 dakika
-var milLastUpdate = null;
+// ─────────────────────────────────────────────────────────────
+//  AUTO-REFRESH (map.on load'dan çağrılıyor — layerlar hazır)
+// ─────────────────────────────────────────────────────────────
 
-function fetchMilAssets() {
-  fetch('/api/mil-assets')
-    .then(function(r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    .then(function(data) {
-      if (!Array.isArray(data) || data.length === 0) return;
-      MIL_ASSETS = data;
-      milLastUpdate = new Date().toLocaleTimeString();
-      // Update source note
-      var note = document.querySelector('.mil-source-note');
-      if (note) note.textContent = 'updated ' + milLastUpdate;
-      if (window._refreshMil) window._refreshMil();
-    })
-    .catch(function(err) {
-      console.warn('[MIL] API unavailable, using static data:', err.message);
-    });
+
+
+function startAutoRefresh() {
+
+  // Mil assets — her 5 dakika
+  function fetchMilAssets() {
+    fetch('/api/mil-assets')
+      .then(function(r) { if(!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(data) {
+        if (!Array.isArray(data) || !data.length) return;
+        MIL_ASSETS = data;
+        window._refreshMil();
+        var note = document.querySelector('.mil-source-note');
+        if (note) note.textContent = 'updated '+new Date().toLocaleTimeString();
+      })
+      .catch(function(e) { console.warn('[MIL] API error, static data korunuyor:', e.message); });
+  }
+
+  // Map events — her 3 dakika
+  function fetchMapEvents() {
+    fetch('/api/map-events')
+      .then(function(r) { if(!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(data) {
+        if (!Array.isArray(data) || !data.length) return;
+        EVENTS = data;
+        window._refreshEvents();
+        renderList(EVENTS);
+        var cnt = document.querySelector('.ev-count');
+        if (cnt) cnt.textContent = EVENTS.length;
+      })
+      .catch(function(e) { console.warn('[EVENTS] API error:', e.message); });
+  }
+
+  // İlk çekimler
+  fetchMilAssets();
+  fetchMapEvents();
+
+  // Periyodik
+  setInterval(fetchMilAssets,  5 * 60 * 1000);
+  setInterval(fetchMapEvents,  3 * 60 * 1000);
 }
 
-// İlk yüklemede de çek, sonra periyodik
-fetchMilAssets();
-setInterval(fetchMilAssets, MIL_REFRESH_INTERVAL);
-
-// Sayfa yenilenmeden event'leri de güncelle (intel feed)
-var EVENT_REFRESH_INTERVAL = 3 * 60 * 1000; // 3 dakika
-function fetchEvents() {
-  fetch('/api/map-events')
-    .then(function(r) { if (!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-    .then(function(data) {
-      if (!Array.isArray(data) || data.length === 0) return;
-      EVENTS = data;
-      // GeoJSON yenile
-      if (map.getSource('events')) {
-        map.getSource('events').setData({
-          type: 'FeatureCollection',
-          features: EVENTS.map(function(ev, idx) {
-            return {
-              type: 'Feature',
-              geometry: { type: 'Point', coordinates: [ev.lng, ev.lat] },
-              properties: {
-                idx: idx, region: ev.region, type: ev.type, score: ev.score,
-                title: ev.title, account: ev.account, color: ev.color,
-                symbol: ev.symbol||'●', label: ev.label||ev.type,
-                radius: Math.round(6 + ev.score * 1.4),
-              }
-            };
-          })
-        });
-      }
-      // Sidebar listesini güncelle
-      renderList(EVENTS);
-      // Event sayısını güncelle
-      var cnt = document.querySelector('.ev-count');
-      if (cnt) cnt.textContent = EVENTS.length;
-    })
-    .catch(function(err) {
-      console.warn('[EVENTS] API unavailable:', err.message);
-    });
-}
-setInterval(fetchEvents, EVENT_REFRESH_INTERVAL);
 </script>
 {% endblock %}

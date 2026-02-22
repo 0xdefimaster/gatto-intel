@@ -1,26 +1,237 @@
 {
-  "timestamp": 1771739343.7023017,
-  "war_score": 63,
+  "timestamp": 1771750538.3500261,
+  "war_score": 54,
   "signals": [
     {
       "account": "visionergeo",
-      "text": "RT by @visionergeo: 🇪🇺🇸🇦🇦🇪🇰🇼🇶🇦 According to Ynet, Arab and European allied countries are expected to take part in intercepting Iranian ballistic missiles aimed ...",
-      "title": "RT by @visionergeo: 🇪🇺🇸🇦🇦🇪🇰🇼🇶🇦 According to Ynet, Arab and European allied countries are expected to take part in interc",
-      "link": "https://nitter.net/NSTRIKE1231/status/2025446577947496844#m",
-      "pubDate": "Sun, 22 Feb 2026 05:44:29 GMT",
-      "timestamp": 1771739069.0,
-      "score": 48,
+      "text": "🇺🇦 Statistics of targets intercepted during the dawn air and missile strike by the Russian forces, published by the Ukrainian Air Force:  1. Out of 297 Shahed-1...",
+      "title": "🇺🇦 Statistics of targets intercepted during the dawn air and missile strike by the Russian forces, published by the Ukra",
+      "link": "https://nitter.net/visionergeo/status/2025493280327168182#m",
+      "pubDate": "Sun, 22 Feb 2026 08:50:04 GMT",
+      "timestamp": 1771750204.0,
+      "score": 24,
       "keywords": [
         "ballistic",
-        "irgc",
         "missile",
-        "war",
-        "hezbollah",
-        "houthi",
+        "intercepted"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
+    },
+    {
+      "account": "MonitorX99800",
+      "text": "🇮🇷🇺🇸⚡️- \"A senior Iranian official said indirect talks between Iran and the United States are expected in early March and the possibility of reaching an interim...",
+      "title": "🇮🇷🇺🇸⚡️- \"A senior Iranian official said indirect talks between Iran and the United States are expected in early March an",
+      "link": "https://nitter.net/MonitorX99800/status/2025492553554948326#m",
+      "pubDate": "Sun, 22 Feb 2026 08:47:11 GMT",
+      "timestamp": 1771750031.0,
+      "score": 3,
+      "keywords": [
         "iran"
       ],
       "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
+    },
+    {
+      "account": "MonitorX99800",
+      "text": "🇮🇷🇺🇸⚡️- An Iranian official: We must be recognized for our right to enrich uranium within the framework of the Nuclear Non-Proliferation Treaty. We will not sur...",
+      "title": "🇮🇷🇺🇸⚡️- An Iranian official: We must be recognized for our right to enrich uranium within the framework of the Nuclear N",
+      "link": "https://nitter.net/MonitorX99800/status/2025491805945401763#m",
+      "pubDate": "Sun, 22 Feb 2026 08:44:13 GMT",
+      "timestamp": 1771749853.0,
+      "score": 13,
+      "keywords": [
+        "nuclear",
+        "iran"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
+    },
+    {
+      "account": "MonitorX99800",
+      "text": "🇷🇺🇮🇷⚡️- Two Russian cargo planes turned off their transponders after entering Iranian airspace and then landed in Tehran. 🇷🇺🇮🇷⚡️- Two Russian cargo planes turne...",
+      "title": "🇷🇺🇮🇷⚡️- Two Russian cargo planes turned off their transponders after entering Iranian airspace and then landed in Tehran",
+      "link": "https://nitter.net/MonitorX99800/status/2025491517385634148#m",
+      "pubDate": "Sun, 22 Feb 2026 08:43:04 GMT",
+      "timestamp": 1771749784.0,
+      "score": 8,
+      "keywords": [
+        "tehran",
+        "iran"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
+    },
+    {
+      "account": "visionergeo",
+      "text": "🇨🇿🇺🇦🗣️\"This is not only Ukraine's war, it is our war as well,\" said Czech President Petr Pavel in Prague. The event was dedicated to the fourth anniversary of t...",
+      "title": "🇨🇿🇺🇦🗣️\"This is not only Ukraine's war, it is our war as well,\" said Czech President Petr Pavel in Prague. The event was ",
+      "link": "https://nitter.net/visionergeo/status/2025491153831768404#m",
+      "pubDate": "Sun, 22 Feb 2026 08:41:37 GMT",
+      "timestamp": 1771749697.0,
+      "score": 5,
+      "keywords": [
+        "war"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
+    },
+    {
+      "account": "visionergeo",
+      "text": "🇺🇸🇮🇷U.S. Middle East envoy Steve Witkoff says that President Trump is curious and frustrated as to why Iran has not yet capitulated to the demands under U.S. mi...",
+      "title": "🇺🇸🇮🇷U.S. Middle East envoy Steve Witkoff says that President Trump is curious and frustrated as to why Iran has not yet ",
+      "link": "https://nitter.net/visionergeo/status/2025490963465121948#m",
+      "pubDate": "Sun, 22 Feb 2026 08:40:52 GMT",
+      "timestamp": 1771749652.0,
+      "score": 3,
+      "keywords": [
+        "iran"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
+    },
+    {
+      "account": "MonitorX99800",
+      "text": "🇮🇷🇺🇸⚡️- The Heydar 110 speedboat of the Iranian Navy which can reach high-speed of 110 knots. Armed with Anti-Ship Cruise Missiles, it boosts Iran’s naval strik...",
+      "title": "🇮🇷🇺🇸⚡️- The Heydar 110 speedboat of the Iranian Navy which can reach high-speed of 110 knots. Armed with Anti-Ship Cruis",
+      "link": "https://nitter.net/MonitorX99800/status/2025490772217266388#m",
+      "pubDate": "Sun, 22 Feb 2026 08:40:06 GMT",
+      "timestamp": 1771749606.0,
+      "score": 16,
+      "keywords": [
+        "missile",
+        "iran",
+        "iran+strike_bonus"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
+    },
+    {
+      "account": "visionergeo",
+      "text": "RT by @visionergeo: 🇺🇦⚔️🗣️ “The war has not reached a deadlock,” — Oleksandr Syrskyi highlighted a key detail:  “At the same time, despite the fact that in 2025...",
+      "title": "RT by @visionergeo: 🇺🇦⚔️🗣️ “The war has not reached a deadlock,” — Oleksandr Syrskyi highlighted a key detail:\n\n“At the ",
+      "link": "https://nitter.net/NSTRIKE1231/status/2025489657937395889#m",
+      "pubDate": "Sun, 22 Feb 2026 08:35:40 GMT",
+      "timestamp": 1771749340.0,
+      "score": 5,
+      "keywords": [
+        "war"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
+    },
+    {
+      "account": "sentdefender",
+      "text": "Two Ilyushin Il-76TDs with the Russian Ministry of Emergency Situations, SUM9105 and SUM912, landed earlier tonight at Sharjah International Airport in the Unit...",
+      "title": "Two Ilyushin Il-76TDs with the Russian Ministry of Emergency Situations, SUM9105 and SUM912, landed earlier tonight at S",
+      "link": "https://nitter.net/sentdefender/status/2025489359361688000#m",
+      "pubDate": "Sun, 22 Feb 2026 08:34:29 GMT",
+      "timestamp": 1771749269.0,
+      "score": 3,
+      "keywords": [
+        "iran"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
+    },
+    {
+      "account": "MonitorX99800",
+      "text": "🇦🇱⚡️- Anti-government protests have turned into violent riots as protesters clash with police in the Albanian capital Tirana, for the second night in a row. 🇦🇱⚡...",
+      "title": "🇦🇱⚡️- Anti-government protests have turned into violent riots as protesters clash with police in the Albanian capital Ti",
+      "link": "https://nitter.net/MonitorX99800/status/2025489216105570566#m",
+      "pubDate": "Sun, 22 Feb 2026 08:33:55 GMT",
+      "timestamp": 1771749235.0,
+      "score": 3,
+      "keywords": [
+        "iran"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
+    },
+    {
+      "account": "MonitorX99800",
+      "text": "🇸🇾🇺🇸⚡️- The US military has begun withdrawing military equipment from Syria, the North Press Agency reports. International coalition personnel are also withdraw...",
+      "title": "🇸🇾🇺🇸⚡️- The US military has begun withdrawing military equipment from Syria, the North Press Agency reports. Internation",
+      "link": "https://nitter.net/MonitorX99800/status/2025487161726734495#m",
+      "pubDate": "Sun, 22 Feb 2026 08:25:45 GMT",
+      "timestamp": 1771748745.0,
+      "score": 4,
+      "keywords": [
+        "syria"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
+    },
+    {
+      "account": "MonitorX99800",
+      "text": "🇫🇷⚡️- The streets of France have become a war zone. Masked men with automatic weapons roam freely through Nice, while terrified citizens flee for their lives. 🇫...",
+      "title": "🇫🇷⚡️- The streets of France have become a war zone. Masked men with automatic weapons roam freely through Nice, while te",
+      "link": "https://nitter.net/MonitorX99800/status/2025486984261599598#m",
+      "pubDate": "Sun, 22 Feb 2026 08:25:03 GMT",
+      "timestamp": 1771748703.0,
+      "score": 5,
+      "keywords": [
+        "war"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
+    },
+    {
+      "account": "MonitorX99800",
+      "text": "🇮🇱🇺🇸🇮🇷⚡️- US Envoy Witkoff: Iranians say their nuclear program is peaceful, but they have enriched much more than necessary, Iranians may be a week away from ob...",
+      "title": "🇮🇱🇺🇸🇮🇷⚡️- US Envoy Witkoff: Iranians say their nuclear program is peaceful, but they have enriched much more than necess",
+      "link": "https://nitter.net/MonitorX99800/status/2025486492131316109#m",
+      "pubDate": "Sun, 22 Feb 2026 08:23:06 GMT",
+      "timestamp": 1771748586.0,
+      "score": 13,
+      "keywords": [
+        "nuclear",
+        "iran"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
+    },
+    {
+      "account": "visionergeo",
+      "text": "🇺🇦⚔️🗣️\"The war has not reached a dead end.\" - Oleksandr Syrskyi named an important detail:  \"Moreover, despite the fact that in 2025 Russia managed to mobilize ...",
+      "title": "🇺🇦⚔️🗣️\"The war has not reached a dead end.\" - Oleksandr Syrskyi named an important detail:\n\n\"Moreover, despite the fact ",
+      "link": "https://nitter.net/visionergeo/status/2025484540605563040#m",
+      "pubDate": "Sun, 22 Feb 2026 08:15:20 GMT",
+      "timestamp": 1771748120.0,
+      "score": 5,
+      "keywords": [
+        "war"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
+    },
+    {
+      "account": "Conflict_Radar",
+      "text": "US ‌envoy Witkoff said he has met with Iran’s exiled Prince Reza Pahlavi:  \"I think he's strong for his country, cares about his country. But this is going to b...",
+      "title": "US ‌envoy Witkoff said he has met with Iran’s exiled Prince Reza Pahlavi:\n\n\"I think he's strong for his country, cares a",
+      "link": "https://nitter.net/Conflict_Radar/status/2025479524553568293#m",
+      "pubDate": "Sun, 22 Feb 2026 07:55:24 GMT",
+      "timestamp": 1771746924.0,
+      "score": 3,
+      "keywords": [
+        "iran"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
+    },
+    {
+      "account": "IranObserver0",
+      "text": "⚡️BREAKING   Steve Witkoff on Iran:  'Trump is curious as to why Iran has not surrendered after such a large military build-up on the part of the US' ⚡️BREAKING...",
+      "title": "⚡️BREAKING \n\nSteve Witkoff on Iran:\n\n'Trump is curious as to why Iran has not surrendered after such a large military bu",
+      "link": "https://nitter.net/IranObserver0/status/2025449136435192205#m",
+      "pubDate": "Sun, 22 Feb 2026 05:54:39 GMT",
+      "timestamp": 1771739679.0,
+      "score": 3,
+      "keywords": [
+        "iran"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
     },
     {
       "account": "sentdefender",
@@ -35,7 +246,7 @@
         "iran+strike_bonus"
       ],
       "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "DailyIranNews",
@@ -50,22 +261,7 @@
         "iran+strike_bonus"
       ],
       "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "MonitorX99800",
-      "text": "🇷🇺🇮🇷⚡️- Newly circulated satellite imagery reportedly shows a Russian-made Repellent-1 electronic warfare system positioned inside Iran.  The Repellent-1 can co...",
-      "title": "🇷🇺🇮🇷⚡️- Newly circulated satellite imagery reportedly shows a Russian-made Repellent-1 electronic warfare system positio",
-      "link": "https://nitter.net/MonitorX99800/status/2025384567666843990#m",
-      "pubDate": "Sun, 22 Feb 2026 01:38:05 GMT",
-      "timestamp": 1771724285.0,
-      "score": 8,
-      "keywords": [
-        "war",
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "DailyIranNews",
@@ -80,22 +276,7 @@
         "iran+strike_bonus"
       ],
       "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "MonitorX99800",
-      "text": "🇺🇸🇮🇷⚡️- Republican Senator Ted Cruz threatens Iranian Supreme Leader Ali Khamenei with an operation similar to the January abduction of Nicolas Maduro and the 1...",
-      "title": "🇺🇸🇮🇷⚡️- Republican Senator Ted Cruz threatens Iranian Supreme Leader Ali Khamenei with an operation similar to the Janua",
-      "link": "https://nitter.net/MonitorX99800/status/2025382103999738141#m",
-      "pubDate": "Sun, 22 Feb 2026 01:28:18 GMT",
-      "timestamp": 1771723698.0,
-      "score": 6,
-      "keywords": [
-        "iran",
-        "abd"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "sentdefender",
@@ -109,35 +290,7 @@
         "explosion"
       ],
       "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "MonitorX99800",
-      "text": "🇺🇸🇻🇪🇨🇺🇮🇷⚡️- Republican Senator Ted Cruz hints at a possible 'US regime change operations in Venezuela, Cuba, and Iran within the next six months' 🇺🇸🇻🇪🇨🇺🇮🇷⚡️- Re...",
-      "title": "🇺🇸🇻🇪🇨🇺🇮🇷⚡️- Republican Senator Ted Cruz hints at a possible 'US regime change operations in Venezuela, Cuba, and Iran wi",
-      "link": "https://nitter.net/MonitorX99800/status/2025380819603271683#m",
-      "pubDate": "Sun, 22 Feb 2026 01:23:11 GMT",
-      "timestamp": 1771723391.0,
-      "score": 3,
-      "keywords": [
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "MonitorX99800",
-      "text": "🇺🇸🇮🇷⚡️- The biggest US military buildup at Iran’s door since 2003 Iraq invasion 🇺🇸🇮🇷⚡️- The biggest US military buildup at Iran’s door since 2003 Iraq invasion...",
-      "title": "🇺🇸🇮🇷⚡️- The biggest US military buildup at Iran’s door since 2003 Iraq invasion",
-      "link": "https://nitter.net/MonitorX99800/status/2025376200625889567#m",
-      "pubDate": "Sun, 22 Feb 2026 01:04:50 GMT",
-      "timestamp": 1771722290.0,
-      "score": 3,
-      "keywords": [
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "DailyIranNews",
@@ -152,7 +305,7 @@
         "missile"
       ],
       "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "DailyIranNews",
@@ -167,37 +320,7 @@
         "iran"
       ],
       "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "MonitorX99800",
-      "text": "RT by @MonitorX99800: 🇺🇸🇮🇷🇮🇱⚡- The Israeli occupying entity enters a state of maximum alert coinciding with the entry of the Commander of the US Air Force, Gene...",
-      "title": "RT by @MonitorX99800: 🇺🇸🇮🇷🇮🇱⚡- The Israeli occupying entity enters a state of maximum alert coinciding with the entry of",
-      "link": "https://nitter.net/ALERTX360/status/2025372003914612894#m",
-      "pubDate": "Sun, 22 Feb 2026 00:48:09 GMT",
-      "timestamp": 1771721289.0,
-      "score": 3,
-      "keywords": [
-        "israeli"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "MonitorX99800",
-      "text": "🇺🇸🇨🇳🇮🇷⚡️- This footage of Atalanta's busy airport captured by Chinese satellite constellation Jilin-1 showcases China's ability to track and monitor any part of...",
-      "title": "🇺🇸🇨🇳🇮🇷⚡️- This footage of Atalanta's busy airport captured by Chinese satellite constellation Jilin-1 showcases China's ",
-      "link": "https://nitter.net/MonitorX99800/status/2025371330023985471#m",
-      "pubDate": "Sun, 22 Feb 2026 00:45:29 GMT",
-      "timestamp": 1771721129.0,
-      "score": 16,
-      "keywords": [
-        "red sea",
-        "houthi",
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "DailyIranNews",
@@ -212,7 +335,7 @@
         "iran"
       ],
       "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "DailyIranNews",
@@ -227,30 +350,27 @@
         "iran"
       ],
       "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
-      "account": "MonitorX99800",
-      "text": "🇺🇸🇮🇷🇮🇱⚡- \"The US strategy is shifting from a short and decisive strike to a long-term attritional campaign aimed at systematically weakening Iran's nuclear faci...",
-      "title": "🇺🇸🇮🇷🇮🇱⚡- \"The US strategy is shifting from a short and decisive strike to a long-term attritional campaign aimed at syst",
-      "link": "https://nitter.net/MonitorX99800/status/2025346175855935902#m",
-      "pubDate": "Sat, 21 Feb 2026 23:05:32 GMT",
-      "timestamp": 1771715132.0,
-      "score": 34,
+      "account": "DailyIranNews",
+      "text": "🇮🇱🇺🇸🇮🇷⚡️- Israel was prepared for US strike on Iran this weekend but it was postponed for unknown reasons - Ynet 🇮🇱🇺🇸🇮🇷⚡️- Israel was prepared for US strike on ...",
+      "title": "🇮🇱🇺🇸🇮🇷⚡️- Israel was prepared for US strike on Iran this weekend but it was postponed for unknown reasons - Ynet",
+      "link": "https://nitter.net/DailyIranNews/status/2025349489419321809#m",
+      "pubDate": "Sat, 21 Feb 2026 23:18:42 GMT",
+      "timestamp": 1771715922.0,
+      "score": 8,
       "keywords": [
-        "nuclear",
-        "irgc",
-        "missile",
         "iran",
         "iran+strike_bonus"
       ],
       "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "MonitorX99800",
-      "text": "Julian Assange: “Nearly every war that had started in the past 50 years, has been a result of media lies” Julian Assange: “Nearly every war that had started in ...",
-      "title": "Julian Assange: “Nearly every war that had started in the past 50 years, has been a result of media lies”",
+      "text": "RT by @MonitorX99800: Julian Assange: “Nearly every war that had started in the past 50 years, has been a result of media lies” Julian Assange: “Nearly every wa...",
+      "title": "RT by @MonitorX99800: Julian Assange: “Nearly every war that had started in the past 50 years, has been a result of medi",
       "link": "https://nitter.net/MonitorX99800/status/2025341111481303248#m",
       "pubDate": "Sat, 21 Feb 2026 22:45:24 GMT",
       "timestamp": 1771713924.0,
@@ -259,7 +379,7 @@
         "war"
       ],
       "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "Conflict_Radar",
@@ -275,24 +395,7 @@
         "conflict "
       ],
       "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "MonitorX99800",
-      "text": "🇮🇱🇺🇸🇮🇷⚡️- Israel was prepared for US strike on Iran this weekend but it was postponed for unknown reasons - Ynet 🇮🇱🇺🇸🇮🇷⚡️- Israel was prepared for US strike on ...",
-      "title": "🇮🇱🇺🇸🇮🇷⚡️- Israel was prepared for US strike on Iran this weekend but it was postponed for unknown reasons - Ynet",
-      "link": "https://nitter.net/MonitorX99800/status/2025340850004246817#m",
-      "pubDate": "Sat, 21 Feb 2026 22:44:22 GMT",
-      "timestamp": 1771713862.0,
-      "score": 8,
-      "keywords": [
-        "iran",
-        "iran+strike_bonus"
-      ],
-      "also_shared_by": [
-        "DailyIranNews"
-      ],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "DailyIranNews",
@@ -308,51 +411,7 @@
       "also_shared_by": [
         "Conflict_Radar"
       ],
-      "raw_total": 632
-    },
-    {
-      "account": "DailyIranNews",
-      "text": "BREAKING: US will be ready to strike Iran within 24 hour   Source: Kan News.   War is 100% confirmed. BREAKING: US will be ready to strike Iran within 24 hour  ...",
-      "title": "BREAKING: US will be ready to strike Iran within 24 hour \n\nSource: Kan News. \n\nWar is 100% confirmed.",
-      "link": "https://nitter.net/DailyIranNews/status/2025339690103308656#m",
-      "pubDate": "Sat, 21 Feb 2026 22:39:45 GMT",
-      "timestamp": 1771713585.0,
-      "score": 13,
-      "keywords": [
-        "war",
-        "iran",
-        "iran+strike_bonus"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "DailyIranNews",
-      "text": "BREAKING   🇮🇷🇮🇶Iran is deploying troops along the border with Iraq. BREAKING   🇮🇷🇮🇶Iran is deploying troops along the border with Iraq....",
-      "title": "BREAKING \n\n🇮🇷🇮🇶Iran is deploying troops along the border with Iraq.",
-      "link": "https://nitter.net/DailyIranNews/status/2025339573723955697#m",
-      "pubDate": "Sat, 21 Feb 2026 22:39:18 GMT",
-      "timestamp": 1771713558.0,
-      "score": 3,
-      "keywords": [
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "DailyIranNews",
-      "text": "🇺🇸 Dozens of American F-35 fighters have reportedly arrived at a NATO airbase in Greece, accompanied by several refueling aircraft. 🇺🇸 Dozens of American F-35 f...",
-      "title": "🇺🇸 Dozens of American F-35 fighters have reportedly arrived at a NATO airbase in Greece, accompanied by several refuelin",
-      "link": "https://nitter.net/DailyIranNews/status/2025339278512001292#m",
-      "pubDate": "Sat, 21 Feb 2026 22:38:07 GMT",
-      "timestamp": 1771713487.0,
-      "score": 6,
-      "keywords": [
-        "f-35"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "Conflict_Radar",
@@ -367,7 +426,7 @@
         "war"
       ],
       "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "Conflict_Radar",
@@ -383,7 +442,7 @@
         "iran+strike_bonus"
       ],
       "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "sentdefender",
@@ -399,37 +458,7 @@
         "iran+strike_bonus"
       ],
       "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "MonitorX99800",
-      "text": "RT by @MonitorX99800: 🇵🇰🇦🇫⚡-Breaking: Pakistan has issued a statement, announcing that today's attacks against terrorist targets in Afghanistan are in retaliati...",
-      "title": "RT by @MonitorX99800: 🇵🇰🇦🇫⚡-Breaking: Pakistan has issued a statement, announcing that today's attacks against terrorist",
-      "link": "https://nitter.net/ALERTX360/status/2025328142735585783#m",
-      "pubDate": "Sat, 21 Feb 2026 21:53:52 GMT",
-      "timestamp": 1771710832.0,
-      "score": 15,
-      "keywords": [
-        "afghanistan",
-        "retaliation",
-        "war"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "MonitorX99800",
-      "text": "🇺🇸🇱🇧⚡️- According to local lebanese media the US is operating militarily on Lebanese soil, specifically in Hamat, North Lebanon, where incidents have reportedly...",
-      "title": "🇺🇸🇱🇧⚡️- According to local lebanese media the US is operating militarily on Lebanese soil, specifically in Hamat, North ",
-      "link": "https://nitter.net/MonitorX99800/status/2025326735349125596#m",
-      "pubDate": "Sat, 21 Feb 2026 21:48:17 GMT",
-      "timestamp": 1771710497.0,
-      "score": 4,
-      "keywords": [
-        "lebanon"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "Conflict_Radar",
@@ -444,7 +473,7 @@
         "conflict "
       ],
       "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "Conflict_Radar",
@@ -459,21 +488,7 @@
         "conflict "
       ],
       "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "visionergeo",
-      "text": "RT by @visionergeo: ❗️❗️❗️ “The losses of the Russian army have exceeded the level of recruitment, so the war has certainly not reached a stalemate. Although in...",
-      "title": "RT by @visionergeo: ❗️❗️❗️ “The losses of the Russian army have exceeded the level of recruitment, so the war has certai",
-      "link": "https://nitter.net/NSTRIKE1231/status/2025305383225454603#m",
-      "pubDate": "Sat, 21 Feb 2026 20:23:26 GMT",
-      "timestamp": 1771705406.0,
-      "score": 5,
-      "keywords": [
-        "war"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "Conflict_Radar",
@@ -488,156 +503,7 @@
         "airstrike"
       ],
       "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "Conflict_Radar",
-      "text": "Israel has detected unusual Hezbollah rocket activity in Lebanon in recent days  - Kann News Israel has detected unusual Hezbollah rocket activity in Lebanon in...",
-      "title": "Israel has detected unusual Hezbollah rocket activity in Lebanon in recent days\n\n- Kann News",
-      "link": "https://nitter.net/Conflict_Radar/status/2025298585487573103#m",
-      "pubDate": "Sat, 21 Feb 2026 19:56:25 GMT",
-      "timestamp": 1771703785.0,
-      "score": 11,
-      "keywords": [
-        "hezbollah",
-        "lebanon"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "visionergeo",
-      "text": "RT by @visionergeo: 🦩🚀🔥 🇷🇺 Following a strike with FP-5 Flamingo-type cruise missiles on a GRAU ammunition depot in the village of Kotluban, a 3,600 m² ammuniti...",
-      "title": "RT by @visionergeo: 🦩🚀🔥 🇷🇺 Following a strike with FP-5 Flamingo-type cruise missiles on a GRAU ammunition depot in the ",
-      "link": "https://nitter.net/NSTRIKE1231/status/2025294905132654664#m",
-      "pubDate": "Sat, 21 Feb 2026 19:41:48 GMT",
-      "timestamp": 1771702908.0,
-      "score": 8,
-      "keywords": [
-        "missile"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "visionergeo",
-      "text": "🇬🇧 RAF KC2 tankers refueling fighter jets near Qatar  📌 The RAF is technically calling it “scheduled training”, but last times they trained in this area was dur...",
-      "title": "🇬🇧 RAF KC2 tankers refueling fighter jets near Qatar\n\n📌 The RAF is technically calling it “scheduled training”, but last",
-      "link": "https://nitter.net/visionergeo/status/2025289637497840043#m",
-      "pubDate": "Sat, 21 Feb 2026 19:20:52 GMT",
-      "timestamp": 1771701652.0,
-      "score": 19,
-      "keywords": [
-        "airstrike",
-        "iran",
-        "israeli",
-        "iran+strike_bonus"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "visionergeo",
-      "text": "🇹🇷 Photo from May 29th of 2025, showing the current NATO aircraft’s sister (NATO08) in Turkey conducting the same mission just a month before the June 2025 stri...",
-      "title": "🇹🇷 Photo from May 29th of 2025, showing the current NATO aircraft’s sister (NATO08) in Turkey conducting the same missio",
-      "link": "https://nitter.net/visionergeo/status/2025289212090618000#m",
-      "pubDate": "Sat, 21 Feb 2026 19:19:10 GMT",
-      "timestamp": 1771701550.0,
-      "score": 13,
-      "keywords": [
-        "war",
-        "iran",
-        "iran+strike_bonus"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "visionergeo",
-      "text": "RT by @visionergeo: 🤣🇮🇷 Iran’s Ministry of Foreign Affairs:  🗣️ “Tehran considers the military naval and air forces of European Union member states to be terror...",
-      "title": "RT by @visionergeo: 🤣🇮🇷 Iran’s Ministry of Foreign Affairs:\n\n🗣️ “Tehran considers the military naval and air forces of E",
-      "link": "https://nitter.net/NSTRIKE1231/status/2025289079185694989#m",
-      "pubDate": "Sat, 21 Feb 2026 19:18:39 GMT",
-      "timestamp": 1771701519.0,
-      "score": 8,
-      "keywords": [
-        "tehran",
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "visionergeo",
-      "text": "🇺🇸🇮🇷Iranian President Pezeshkian reaffirmed that Iran will not bow its head in the face of U.S. pressure.   “We will not give up in the face of these challenges...",
-      "title": "🇺🇸🇮🇷Iranian President Pezeshkian reaffirmed that Iran will not bow its head in the face of U.S. pressure. \n\n“We will not",
-      "link": "https://nitter.net/visionergeo/status/2025288663572099112#m",
-      "pubDate": "Sat, 21 Feb 2026 19:17:00 GMT",
-      "timestamp": 1771701420.0,
-      "score": 3,
-      "keywords": [
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "visionergeo",
-      "text": "🇺🇸🇨🇭🇮🇷ISNA: The U.S. accepted that Iran wouldn’t accept zero enrichment at the most recent negotiations in Geneva.   An Iranian diplomat told the  student run n...",
-      "title": "🇺🇸🇨🇭🇮🇷ISNA: The U.S. accepted that Iran wouldn’t accept zero enrichment at the most recent negotiations in Geneva. \n\nAn ",
-      "link": "https://nitter.net/visionergeo/status/2025288151636312538#m",
-      "pubDate": "Sat, 21 Feb 2026 19:14:58 GMT",
-      "timestamp": 1771701298.0,
-      "score": 13,
-      "keywords": [
-        "nuclear",
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "visionergeo",
-      "text": "🇺🇸❌🇨🇳 BIG | CNN report: US intelligence estimates China is developing a \"new generation\" of nuclear weapons 🇺🇸❌🇨🇳 BIG | CNN report: US intelligence estimates Ch...",
-      "title": "🇺🇸❌🇨🇳 BIG | CNN report: US intelligence estimates China is developing a \"new generation\" of nuclear weapons",
-      "link": "https://nitter.net/visionergeo/status/2025287689788854705#m",
-      "pubDate": "Sat, 21 Feb 2026 19:13:07 GMT",
-      "timestamp": 1771701187.0,
-      "score": 10,
-      "keywords": [
-        "nuclear"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "visionergeo",
-      "text": "🇺🇸 USAF aircraft currently at Prince Sultan Air Base, Saudi Arabia  6x E-3G AWACS 3X E-11A BACN’s 13x KC-135R/T’s 7x KC-46A’s 6x C-130J’s 🇺🇸 USAF aircraft curre...",
-      "title": "🇺🇸 USAF aircraft currently at Prince Sultan Air Base, Saudi Arabia\n\n6x E-3G AWACS\n3X E-11A BACN’s\n13x KC-135R/T’s\n7x KC-",
-      "link": "https://nitter.net/visionergeo/status/2025287276679274554#m",
-      "pubDate": "Sat, 21 Feb 2026 19:11:29 GMT",
-      "timestamp": 1771701089.0,
-      "score": 6,
-      "keywords": [
-        "kc-135"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "visionergeo",
-      "text": "🇺🇸🇮🇷 Israel estimates that US President Trump is about to make his decision and that an attack on Iran will take place in the coming days — Israeli Channel 13 🇺...",
-      "title": "🇺🇸🇮🇷 Israel estimates that US President Trump is about to make his decision and that an attack on Iran will take place i",
-      "link": "https://nitter.net/visionergeo/status/2025286737656709141#m",
-      "pubDate": "Sat, 21 Feb 2026 19:09:20 GMT",
-      "timestamp": 1771700960.0,
-      "score": 6,
-      "keywords": [
-        "iran",
-        "israeli"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "IranObserver0",
@@ -654,80 +520,7 @@
       "also_shared_by": [
         "DailyIranNews"
       ],
-      "raw_total": 632
-    },
-    {
-      "account": "DailyIranNews",
-      "text": "BREAKING  🇮🇷 Iranian Air Authority issues NOTAMS for 6 points across the country. BREAKING  🇮🇷 Iranian Air Authority issues NOTAMS for 6 points across the count...",
-      "title": "BREAKING\n\n🇮🇷 Iranian Air Authority issues NOTAMS for 6 points across the country.",
-      "link": "https://nitter.net/DailyIranNews/status/2025278836817232331#m",
-      "pubDate": "Sat, 21 Feb 2026 18:37:57 GMT",
-      "timestamp": 1771699077.0,
-      "score": 15,
-      "keywords": [
-        "notam",
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "Conflict_Radar",
-      "text": "During Oman-mediated talks, Iran’s FM Araghchi refused to open a U.S. envelope on missile proposals and sent it back - Reuters During Oman-mediated talks, Iran’...",
-      "title": "During Oman-mediated talks, Iran’s FM Araghchi refused to open a U.S. envelope on missile proposals and sent it back - R",
-      "link": "https://nitter.net/Conflict_Radar/status/2025268854574743670#m",
-      "pubDate": "Sat, 21 Feb 2026 17:58:17 GMT",
-      "timestamp": 1771696697.0,
-      "score": 11,
-      "keywords": [
-        "missile",
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "Conflict_Radar",
-      "text": "Democrat Alexandria Ocasio-Cortez:  \"No war with Iran.\" Democrat Alexandria Ocasio-Cortez:  \"No war with Iran.\"...",
-      "title": "Democrat Alexandria Ocasio-Cortez:\n\n\"No war with Iran.\"",
-      "link": "https://nitter.net/Conflict_Radar/status/2025267114982965348#m",
-      "pubDate": "Sat, 21 Feb 2026 17:51:22 GMT",
-      "timestamp": 1771696282.0,
-      "score": 8,
-      "keywords": [
-        "war",
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "Conflict_Radar",
-      "text": "Fresh student protests reported in several Iranian cities Fresh student protests reported in several Iranian cities  Video...",
-      "title": "Fresh student protests reported in several Iranian cities",
-      "link": "https://nitter.net/Conflict_Radar/status/2025266378719080751#m",
-      "pubDate": "Sat, 21 Feb 2026 17:48:26 GMT",
-      "timestamp": 1771696106.0,
-      "score": 3,
-      "keywords": [
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "Conflict_Radar",
-      "text": "U.S. military aircraft were spotted at Lajes Air Base in Portugal as Washington strengthens its military posture amid rising tensions with Iran - Fox News U.S. ...",
-      "title": "U.S. military aircraft were spotted at Lajes Air Base in Portugal as Washington strengthens its military posture amid ri",
-      "link": "https://nitter.net/Conflict_Radar/status/2025261190881181990#m",
-      "pubDate": "Sat, 21 Feb 2026 17:27:50 GMT",
-      "timestamp": 1771694870.0,
-      "score": 3,
-      "keywords": [
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "IranObserver0",
@@ -741,7 +534,7 @@
         "iran"
       ],
       "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "IranObserver0",
@@ -755,21 +548,7 @@
         "iran"
       ],
       "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "sentdefender",
-      "text": "Foreign Minister of the Islamic Republic of Iran, Seyed Araghchi, states the Iranian government has published a list of 3,117 \"victims of recent terrorist opera...",
-      "title": "Foreign Minister of the Islamic Republic of Iran, Seyed Araghchi, states the Iranian government has published a list of ",
-      "link": "https://nitter.net/sentdefender/status/2025196324862246983#m",
-      "pubDate": "Sat, 21 Feb 2026 13:10:04 GMT",
-      "timestamp": 1771679404.0,
-      "score": 3,
-      "keywords": [
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "IranObserver0",
@@ -783,21 +562,7 @@
         "iran"
       ],
       "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "Conflict_Radar",
-      "text": "If Iran wants to prevent an attack on it, it should make an offer it can't refuse  - U.S. official to Axios If Iran wants to prevent an attack on it, it should ...",
-      "title": "If Iran wants to prevent an attack on it, it should make an offer it can't refuse\n\n- U.S. official to Axios",
-      "link": "https://nitter.net/Conflict_Radar/status/2025154569609576497#m",
-      "pubDate": "Sat, 21 Feb 2026 10:24:09 GMT",
-      "timestamp": 1771669449.0,
-      "score": 3,
-      "keywords": [
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "Conflict_Radar",
@@ -812,83 +577,7 @@
         "iran"
       ],
       "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "sentdefender",
-      "text": "At least 15 KC-46A Pegasus seen on the ground at Lajes Field in the Azores, located in the Northern Atlantic roughly 900 miles from the coast of Portugal, a maj...",
-      "title": "At least 15 KC-46A Pegasus seen on the ground at Lajes Field in the Azores, located in the Northern Atlantic roughly 900",
-      "link": "https://nitter.net/sentdefender/status/2025104859175985286#m",
-      "pubDate": "Sat, 21 Feb 2026 07:06:37 GMT",
-      "timestamp": 1771657597.0,
-      "score": 18,
-      "keywords": [
-        "nuclear",
-        "war",
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "sentdefender",
-      "text": "During an interview earlier this week with conservative commentator and influencer Tucker Carlson, U.S. Ambassador to Israel Mike Huckabee, citing Genesis 15, s...",
-      "title": "During an interview earlier this week with conservative commentator and influencer Tucker Carlson, U.S. Ambassador to Is",
-      "link": "https://nitter.net/sentdefender/status/2025049923138249153#m",
-      "pubDate": "Sat, 21 Feb 2026 03:28:19 GMT",
-      "timestamp": 1771644499.0,
-      "score": 8,
-      "keywords": [
-        "syria",
-        "lebanon"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "sentdefender",
-      "text": "“President Trump will be ready to accept a deal that would be substantive and that he can sell politically at home. If the Iranians want to prevent an attack th...",
-      "title": "“President Trump will be ready to accept a deal that would be substantive and that he can sell politically at home. If t",
-      "link": "https://nitter.net/sentdefender/status/2025010711538151932#m",
-      "pubDate": "Sat, 21 Feb 2026 00:52:31 GMT",
-      "timestamp": 1771635151.0,
-      "score": 13,
-      "keywords": [
-        "nuclear",
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "sentdefender",
-      "text": "The Trump Administration is prepared to consider a proposal that allows Iran “token” nuclear enrichment if it leaves no possible path to a bomb, a senior U.S. o...",
-      "title": "The Trump Administration is prepared to consider a proposal that allows Iran “token” nuclear enrichment if it leaves no ",
-      "link": "https://nitter.net/sentdefender/status/2025006289324069230#m",
-      "pubDate": "Sat, 21 Feb 2026 00:34:56 GMT",
-      "timestamp": 1771634096.0,
-      "score": 13,
-      "keywords": [
-        "nuclear",
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "MonitorX99800",
-      "text": "RT by @MonitorX99800: 🇮🇱🇵🇸⚡️- A gas grenade was thrown from an Israeli Army vehichle towards children playing football in Ramallah as part of a Ramadan game. 🇮🇱...",
-      "title": "RT by @MonitorX99800: 🇮🇱🇵🇸⚡️- A gas grenade was thrown from an Israeli Army vehichle towards children playing football i",
-      "link": "https://nitter.net/MonitorX99800/status/2024997043886796954#m",
-      "pubDate": "Fri, 20 Feb 2026 23:58:12 GMT",
-      "timestamp": 1771631892.0,
-      "score": 8,
-      "keywords": [
-        "war",
-        "israeli"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     },
     {
       "account": "IranObserver0",
@@ -904,7 +593,25 @@
         "iran"
       ],
       "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
+    },
+    {
+      "account": "sentdefender",
+      "text": "RT by @sentdefender: The U.S. Department of Defense has spent the week amassing a very large force in Europe and the Middle East with over 100 aircraft arriving...",
+      "title": "RT by @sentdefender: The U.S. Department of Defense has spent the week amassing a very large force in Europe and the Mid",
+      "link": "https://nitter.net/sentdefender/status/2024929210867839399#m",
+      "pubDate": "Fri, 20 Feb 2026 19:28:39 GMT",
+      "timestamp": 1771615719.0,
+      "score": 29,
+      "keywords": [
+        "f-35",
+        "kc-135",
+        "uss gerald",
+        "uss abraham",
+        "iran"
+      ],
+      "also_shared_by": [],
+      "raw_total": 383
     },
     {
       "account": "IranObserver0",
@@ -918,77 +625,7 @@
         "iran"
       ],
       "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "IranObserver0",
-      "text": "⚡️BREAKING   Paramilitary forces in Iraq have released a video declaring their readiness to join the war  Experts believe Iraq bordering Jordan and Kuwait will ...",
-      "title": "⚡️BREAKING \n\nParamilitary forces in Iraq have released a video declaring their readiness to join the war\n\nExperts believ",
-      "link": "https://nitter.net/IranObserver0/status/2024785275046519065#m",
-      "pubDate": "Fri, 20 Feb 2026 09:56:42 GMT",
-      "timestamp": 1771581402.0,
-      "score": 5,
-      "keywords": [
-        "war"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "IranObserver0",
-      "text": "⚡️BREAKING   If Iran becomes destabilized, Europe could be flooded with over 20 million refugees  Most will enter Europe via Turkey - German Think Thank ⚡️BREAK...",
-      "title": "⚡️BREAKING \n\nIf Iran becomes destabilized, Europe could be flooded with over 20 million refugees\n\nMost will enter Europe",
-      "link": "https://nitter.net/IranObserver0/status/2024747522766381183#m",
-      "pubDate": "Fri, 20 Feb 2026 07:26:42 GMT",
-      "timestamp": 1771572402.0,
-      "score": 3,
-      "keywords": [
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "IranObserver0",
-      "text": "⚡️BREAKING   Iran in a letter to the UN Security Council:   If we are attacked, all bases, facilities, and assets of the hostile force in the region would be le...",
-      "title": "⚡️BREAKING \n\nIran in a letter to the UN Security Council: \n\nIf we are attacked, all bases, facilities, and assets of the",
-      "link": "https://nitter.net/IranObserver0/status/2024617881661497645#m",
-      "pubDate": "Thu, 19 Feb 2026 22:51:33 GMT",
-      "timestamp": 1771541493.0,
-      "score": 3,
-      "keywords": [
-        "iran"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "IranObserver0",
-      "text": "Many people ask what would happen if the Strait of Hormuz is shut down  I will explain 4 consequences that could occur if it gets shut down, even for a short pe...",
-      "title": "Many people ask what would happen if the Strait of Hormuz is shut down\n\nI will explain 4 consequences that could occur i",
-      "link": "https://nitter.net/IranObserver0/status/2024574626337042454#m",
-      "pubDate": "Thu, 19 Feb 2026 19:59:40 GMT",
-      "timestamp": 1771531180.0,
-      "score": 8,
-      "keywords": [
-        "hormuz"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
-    },
-    {
-      "account": "IranObserver0",
-      "text": "⚡️BREAKING   Chinese satellites have revealed the location of 13 US Air Force tanker aircraft stationed in Saudi Arabia  Boeing E-3G AWACS and 5 Lockheed C-130 ...",
-      "title": "⚡️BREAKING \n\nChinese satellites have revealed the location of 13 US Air Force tanker aircraft stationed in Saudi Arabia\n",
-      "link": "https://nitter.net/IranObserver0/status/2024530421946445847#m",
-      "pubDate": "Thu, 19 Feb 2026 17:04:01 GMT",
-      "timestamp": 1771520641.0,
-      "score": 5,
-      "keywords": [
-        "war"
-      ],
-      "also_shared_by": [],
-      "raw_total": 632
+      "raw_total": 383
     }
   ]
 }

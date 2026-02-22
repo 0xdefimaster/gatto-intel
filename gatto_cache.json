@@ -1,34 +1,100 @@
 {
-  "timestamp": 1771739501.100724,
+  "timestamp": 1771750512.9555557,
   "articles": [
     {
-      "title": "Trump’s Carlson outreach was worth trying, but it did not end up working - editorial",
+      "title": "NASA may roll back Artemis II rocket after helium flow issue, March launch at risk",
+      "description": "NASA said it is taking steps to roll back the Artemis II rocket and Orion spacecraft to the Vehicle Assembly Building at the agency’s Kennedy Space Center in Florida.",
+      "url": "https://www.jpost.com/science/space/article-887457",
+      "urlToImage": null,
+      "publishedAt": "Sun, 22 Feb 2026 10:30:17 GMT",
+      "source": {
+        "name": "JPOST"
+      },
+      "_tag": "JPOST"
+    },
+    {
+      "title": "Iran may be capable of producing industrial-grade bombs in 'probably a week,' Witkoff says",
+      "description": "Witkoff restated Trump's previous commitment to \"zero enrichment\" by Tehran in any future deal. \"There have been some very hard red lines drawn,\" he said.",
+      "url": "https://www.jpost.com/middle-east/article-887433",
+      "urlToImage": null,
+      "publishedAt": "Sun, 22 Feb 2026 10:28:59 GMT",
+      "source": {
+        "name": "JPOST"
+      },
+      "_tag": "JPOST"
+    },
+    {
+      "title": "Ukraine claims blackmail by Hungary and Slovakia over energy",
+      "description": "Shipments of Russian oil to Hungary and Slovakia have been cut off since January 27, when Kyiv says a Russian drone strike hit pipeline equipment in Western Ukraine.",
+      "url": "https://www.jpost.com/international/internationalrussia-ukraine-war/article-887443",
+      "urlToImage": null,
+      "publishedAt": "Sun, 22 Feb 2026 09:42:19 GMT",
+      "source": {
+        "name": "JPOST"
+      },
+      "_tag": "JPOST"
+    },
+    {
+      "title": "Police officer killed, 24 people injured after explosive devices were detonated in western Ukraine",
+      "description": "It was also announced that Russia attacked Ukraine with dozens of strike drones, ballistic and cruise missiles, focusing on energy infrastructure, as said by Ukrainian military and local officials.",
+      "url": "https://www.jpost.com/international/internationalrussia-ukraine-war/article-887440",
+      "urlToImage": null,
+      "publishedAt": "Sun, 22 Feb 2026 09:39:49 GMT",
+      "source": {
+        "name": "JPOST"
+      },
+      "_tag": "JPOST"
+    },
+    {
+      "title": "India-Israel tech synergy will define the next decade of defense strategy - opinion",
+      "description": "With its record FY27 defense budget, India is doubling down on AI, autonomy, and self‑reliance, reshaping its partnership with Israel in the process",
+      "url": "https://www.jpost.com/defense-and-tech/article-887428",
+      "urlToImage": null,
+      "publishedAt": "Sun, 22 Feb 2026 08:05:40 GMT",
+      "source": {
+        "name": "JPOST"
+      },
+      "_tag": "JPOST"
+    },
+    {
+      "title": "Iran’s president says his country will not bow to US pressure",
+      "description": "Iranian President Masoud Pezeshkian says Tehran will not bow to US pressure over nuclear talks.",
+      "url": "https://www.aljazeera.com/video/newsfeed/2026/2/22/irans-president-says-his-country-will-not-bow-to-us-pressure?traffic_source=rss",
+      "urlToImage": null,
+      "publishedAt": "Sun, 22 Feb 2026 07:11:28 +0000",
+      "source": {
+        "name": "ALJAZEERA"
+      },
+      "_tag": "ALJAZEERA"
+    },
+    {
+      "title": "Attacked in India, Kashmiri shawl sellers choose between safety, livelihood",
+      "description": "A surge in attacks has forced many Kashmiris to return home. Others are devising survival strategies.",
+      "url": "https://www.aljazeera.com/news/2026/2/22/attacked-in-india-kashmiri-shawl-sellers-choose-between-safety-livelihood?traffic_source=rss",
+      "urlToImage": null,
+      "publishedAt": "Sun, 22 Feb 2026 07:07:55 +0000",
+      "source": {
+        "name": "ALJAZEERA"
+      },
+      "_tag": "ALJAZEERA"
+    },
+    {
+      "title": "Iran will not bow down to US pressure in nuclear talks, Pezeshkian says",
+      "description": "Iranian president vows to stand firm as Trump threatens strikes and the US bolsters its military presence in the Gulf.",
+      "url": "https://www.aljazeera.com/news/2026/2/22/iran-will-not-bow-down-to-us-pressure-in-nuclear-talks-pezeshkian-says?traffic_source=rss",
+      "urlToImage": null,
+      "publishedAt": "Sun, 22 Feb 2026 06:48:00 +0000",
+      "source": {
+        "name": "ALJAZEERA"
+      },
+      "_tag": "ALJAZEERA"
+    },
+    {
+      "title": "Trump’s Carlson outreach was worth trying, but it ultimately failed - editorial",
       "description": "The Trump administration deserves credit for recognizing the seriousness of antisemitism on the Right and the Israel divide feeding it. But it must be understood that invitations are not enough.",
       "url": "https://www.jpost.com/opinion/article-887410",
       "urlToImage": null,
       "publishedAt": "Sun, 22 Feb 2026 05:55:04 GMT",
-      "source": {
-        "name": "JPOST"
-      },
-      "_tag": "JPOST"
-    },
-    {
-      "title": "Pakistan strikes Afghanistan targets after blaming attacks on Afghan terrorists",
-      "description": "The strikes mark a sharp escalation in tensions between Pakistan and Taliban-ruled Afghanistan, days after Kabul released three Pakistani soldiers in a Saudi-mediated move aimed at easing tensions.",
-      "url": "https://www.jpost.com/international/article-887423",
-      "urlToImage": null,
-      "publishedAt": "Sun, 22 Feb 2026 05:12:33 GMT",
-      "source": {
-        "name": "JPOST"
-      },
-      "_tag": "JPOST"
-    },
-    {
-      "title": "IDF celebrates new search and rescue unit amid growing tensions with Iran",
-      "description": "Nicknamed \"The Lion Battalion,\" this unit was originally formed in response to the October 7th attack.",
-      "url": "https://www.jpost.com/israel-news/defense-news/article-887422",
-      "urlToImage": null,
-      "publishedAt": "Sun, 22 Feb 2026 05:09:16 GMT",
       "source": {
         "name": "JPOST"
       },
@@ -68,17 +134,6 @@
       "_tag": "JPOST"
     },
     {
-      "title": "Australia denies it is working to repatriate Islamic State family members",
-      "description": "The 34 women and children were released on Monday from the camp in northern Syria, but returned to the detention center due to technical reasons.",
-      "url": "https://www.jpost.com/international/article-887417",
-      "urlToImage": null,
-      "publishedAt": "Sun, 22 Feb 2026 02:10:38 GMT",
-      "source": {
-        "name": "JPOST"
-      },
-      "_tag": "JPOST"
-    },
-    {
       "title": "Huckabee’s Israel land remarks condemned as ‘dangerous’ as controversy rumbles on",
       "description": "Arab and Islamic governments issue joint statement denouncing the comments made on Tucker Carlson podcastArab and Islamic countries jointly condemned remarks by the US ambassador to Israel, Mike Hucka",
       "url": "https://www.theguardian.com/us-news/2026/feb/22/mike-huckabee-israel-comments-condemned-arab-muslim-countries",
@@ -95,17 +150,6 @@
       "url": "https://www.jpost.com/international/article-887415",
       "urlToImage": null,
       "publishedAt": "Sun, 22 Feb 2026 01:03:56 GMT",
-      "source": {
-        "name": "JPOST"
-      },
-      "_tag": "JPOST"
-    },
-    {
-      "title": "Islamic State begins new phase of operations against Syrian regime with two terror attacks",
-      "description": "The terrorist group said on its Dabiq news agency that it had targeted “an individual of the apostate Syrian regime” in the city of Mayadin in Deir al-Zor province using a pistol.",
-      "url": "https://www.jpost.com/middle-east/isis-threat/article-887414",
-      "urlToImage": null,
-      "publishedAt": "Sun, 22 Feb 2026 00:26:30 GMT",
       "source": {
         "name": "JPOST"
       },
@@ -145,39 +189,6 @@
       "_tag": "JPOST"
     },
     {
-      "title": "Trump's Mar-a-Lago could be targeted if US attacks Iran, says Iranian MP - report",
-      "description": "No immediate US official response to these remarks was identified in the reports reviewed by The Jerusalem Post at the time of publication",
-      "url": "https://www.jpost.com/middle-east/iran-news/article-887413",
-      "urlToImage": null,
-      "publishedAt": "Sat, 21 Feb 2026 23:15:56 GMT",
-      "source": {
-        "name": "JPOST"
-      },
-      "_tag": "JPOST"
-    },
-    {
-      "title": "I am tired of Tucker Carlson’s Israel show, when Mike Huckabee deserves focus - comment",
-      "description": "Carlson will keep generating headlines. But Huckabee made the argument, and arguments have a longer half-life than clips. We should thank him for speaking the truth of Judeo-Christian values.",
-      "url": "https://www.jpost.com/opinion/article-887412",
-      "urlToImage": null,
-      "publishedAt": "Sat, 21 Feb 2026 22:52:52 GMT",
-      "source": {
-        "name": "JPOST"
-      },
-      "_tag": "JPOST"
-    },
-    {
-      "title": "Tucker Carlson's lie about Herzog visiting Epstein's island is a direct attack on Israel - opinion",
-      "description": "Falsely accusing the President of the State of Israel is not merely a personal attack. It is part of a broader and\ndeeply troubling pattern of obsessive misinformation directed against Israel.",
-      "url": "https://www.jpost.com/opinion/article-887411",
-      "urlToImage": null,
-      "publishedAt": "Sat, 21 Feb 2026 22:31:33 GMT",
-      "source": {
-        "name": "JPOST"
-      },
-      "_tag": "JPOST"
-    },
-    {
       "title": "Iran students stage first large anti-government protests since deadly crackdown",
       "description": "The student protesters honoured thousands of those killed when nationwide mass protests were put down last month.",
       "url": "https://www.bbc.com/news/articles/c5yj2kzkrj0o?at_medium=RSS&at_campaign=rss",
@@ -189,19 +200,8 @@
       "_tag": "BBC"
     },
     {
-      "title": "Trump's options on Iran: US weighs 'token' Iran enrichment in narrow nuclear compromise - report",
-      "description": "The potential concession would test the limits of longstanding US demands that Iran’s nuclear program not leave any possible path to a bomb.",
-      "url": "https://www.jpost.com/middle-east/article-887405",
-      "urlToImage": null,
-      "publishedAt": "Sat, 21 Feb 2026 21:45:41 GMT",
-      "source": {
-        "name": "JPOST"
-      },
-      "_tag": "JPOST"
-    },
-    {
       "title": "‘Absurd and provocative’: Huckabee faces firestorm for Israel border stance",
-      "description": "Egypt, Jordan, Saudi Arabia denounce US ambassador&#039;s remarks suggesting Israel has right to much of the Middle East.",
+      "description": "Egypt, Jordan and Saudi Arabia denounce US ambassador&#039;s remarks suggesting Israel has right to much of the Middle East.",
       "url": "https://www.aljazeera.com/news/2026/2/21/absurd-and-provocative-huckabee-faces-firestorm-for-israel-border-stance?traffic_source=rss",
       "urlToImage": null,
       "publishedAt": "Sat, 21 Feb 2026 21:31:19 +0000",
@@ -220,17 +220,6 @@
         "name": "BBC"
       },
       "_tag": "BBC"
-    },
-    {
-      "title": "Italy's RAI apologizes after latest gaffe targets Israeli bobsleigh team",
-      "description": "On Saturday, viewers heard \"Let's avoid crew number 21, which is the Israeli one,\" and then \"no, because ...\" before the sound was cut off.",
-      "url": "https://www.jpost.com/israel-news/sports/article-887402",
-      "urlToImage": null,
-      "publishedAt": "Sat, 21 Feb 2026 21:14:24 GMT",
-      "source": {
-        "name": "JPOST"
-      },
-      "_tag": "JPOST"
     },
     {
       "title": "Nasa astronauts' moon mission delayed due to rocket issue",
@@ -326,6 +315,17 @@
       "url": "https://www.middleeasteye.net/opinion/how-jewish-day-school-fabricated-antisemitism-scandal-south-africa",
       "urlToImage": null,
       "publishedAt": "Sat, 21 Feb 2026 17:00:33 +0000",
+      "source": {
+        "name": "MEE"
+      },
+      "_tag": "MEE"
+    },
+    {
+      "title": "Arab countries slam US ambassador remarks that Israel can take over all Middle East",
+      "description": "Arab countries slam US ambassador remarks that Israel can take over all Middle East\n\n    \n    \n\n          \n      \n      \n        Submitted by \nMera Aladam\n on \nSat, 02/21/2026 - 14:19\n\n        \n      ",
+      "url": "https://www.middleeasteye.net/news/palestine-jordan-egypt-slam-us-ambassador-huckabees-israel-take-over-remarks",
+      "urlToImage": null,
+      "publishedAt": "Sat, 21 Feb 2026 17:00:26 +0000",
       "source": {
         "name": "MEE"
       },

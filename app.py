@@ -399,7 +399,8 @@ def map_view():
     sigs.sort(key=lambda x:x.get("timestamp",0),reverse=True)
     return render_template("map.html", active_page="map", burn=BURN_DATA,
         war_score=ws, intel_sources=sigs,
-        map_events=extract_map_events(sigs), icon_meta=ICON_META, now=_now())
+        map_events=extract_map_events(sigs), icon_meta=ICON_META,
+        mil_assets=get_mil_assets(), now=_now())
 
 @app.route("/news")
 def news():

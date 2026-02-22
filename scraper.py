@@ -9,14 +9,33 @@ from email.utils import parsedate_to_datetime
 INTEL_ACCOUNTS = ["sentdefender", "war_monitor", "MonitorX99800", "visionergeo", "IranObserver0","DailyIranNews", "Conflict_Radar",]
 
 NITTER_INSTANCES = [
+    "https://nitter.catsarch.com",
+    "https://nitter.privacyredirect.com",
+    "https://nitter.tiekoetter.com",
+    "https://xcancel.com",
+    "https://lightbrd.com",
     "https://nitter.poast.org",
     "https://nitter.privacydev.net",
-    "https://nitter.kavin.rocks",      # YENİ
-    "https://nitter.1d4.us",            # YENİ
-    "https://nitter.unixfox.eu",        # YENİ
-    "https://nitter.net",       
-    "https://nitter.perennialte.ch", # Şu an en stabillerden biri
-    "https://nitter.esmailelbob.xyz",    
+    "https://nitter.kavin.rocks",
+    "https://nitter.1d4.us",
+    "https://nitter.unixfox.eu",
+    "https://nitter.net",
+    "https://nitter.perennialte.ch",
+    "https://nitter.esmailelbob.xyz",
+]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PLAN B — YEDEK RSS KAYNAKLARI (Nitter tamamen ölüyse devreye girer)
+# Sadece çatışma/savunma/istihbarat odaklı — spor/magazin haberleri gelmez
+# ─────────────────────────────────────────────────────────────────────────────
+
+FALLBACK_RSS_SOURCES = [
+    {"url": "https://www.iranintl.com/en/rss",      "account": "IranIntl"},
+    {"url": "https://liveuamap.com/rss",             "account": "LiveUAMap"},
+    {"url": "https://understandingwar.org/rss.xml",  "account": "ISW"},
+    {"url": "https://www.middleeasteye.net/rss",     "account": "MiddleEastEye"},
+    {"url": "https://www.defensenews.com/rss/",      "account": "DefenseNews"},
+    {"url": "https://thedefensepost.com/feed/",      "account": "DefensePost"},
 ]
 
 IMPACT_KEYWORDS = {
@@ -144,6 +163,43 @@ def fetch_rss(url: str, label: str, limit: int = 10) -> list:
         print(f"[RSS ✗] {label}: {e}")
         return []
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# NITTER CANLILIK KONTROLÜ (program başında bir kez yapılır)
+# ─────────────────────────────────────────────────────────────────────────────
+
+_NITTER_ALIVE = None  # None=test edilmedi, True=çalışıyor, False=ölü
+
+def _check_nitter_alive() -> bool:
+    global _NITTER_ALIVE
+    if _NITTER_ALIVE is not None:
+        return _NITTER_ALIVE
+    # Tüm instance'ları sırayla dene, her biri 8sn timeout — ilk çalışanı bulunca dur
+    for instance in NITTER_INSTANCES:
+        try:
+            url = f"{instance.rstrip('/')}/sentdefender/rss"
+            r = requests.get(url, timeout=8, verify=False,
+                             headers={"User-Agent": "Mozilla/5.0"})
+            if r.status_code == 200 and b"<rss" in r.content[:300]:
+                print(f"[✓] Nitter aktif: {instance}")
+                _NITTER_ALIVE = True
+                return True
+        except:
+            pass
+    print("[!] Nitter ölü → Plan B: Fallback RSS devreye giriyor.")
+    _NITTER_ALIVE = False
+    return False
+
+def fetch_fallback_sources(limit: int = 15) -> list:
+    """Plan B: Fallback RSS kaynaklarından veri çeker."""
+    all_items = []
+    for source in FALLBACK_RSS_SOURCES:
+        items = fetch_rss(source["url"], source["account"], limit=limit)
+        for item in items:
+            item["account"] = source["account"]
+        all_items.extend(items)
+    return all_items
+
 def fetch_account(account: str, limit: int = 10) -> list:
     for instance in NITTER_INSTANCES:
         url = f"{instance.rstrip('/')}/{account}/rss"
@@ -158,18 +214,24 @@ def fetch_account(account: str, limit: int = 10) -> list:
 # SAVAŞ ENDEKSİ HESAPLAMA (TEK VE TEMİZ VERSİYON)
 # ─────────────────────────────────────────────────────────────────────────────
 
-def calculate_war_index(per_account_limit: int = 10) -> tuple:
+def calculate_war_index(per_account_limit: int = 15) -> tuple:
     total_score = 0
     signals = []
     seen_titles = []
 
-    for account in INTEL_ACCOUNTS:
-        items = fetch_account(account, limit=per_account_limit)
+    # Plan A: Nitter çalışıyor mu? Değilse Plan B: Fallback RSS
+    if _check_nitter_alive():
+        source_items = []
+        for account in INTEL_ACCOUNTS:
+            source_items.extend(fetch_account(account, limit=per_account_limit))
+        mode = "Nitter"
+    else:
+        source_items = fetch_fallback_sources(limit=per_account_limit)
+        mode = "Fallback RSS"
 
-        for item in items:
-            # Başlık ve açıklamayı birleştir (Bazı tweetler sadece açıklamada olur)
+    for item in source_items:
             full_text = f"{item.get('title', '')} {item.get('description', '')}"
-            
+
             pts, hits = score_title(full_text)
             if pts == 0: continue
 
@@ -178,7 +240,7 @@ def calculate_war_index(per_account_limit: int = 10) -> tuple:
             if dup:
                 if 0 <= dup_idx < len(signals):
                     asb = signals[dup_idx].setdefault("also_shared_by", [])
-                    if account not in asb: asb.append(account)
+                    if item.get("account") not in asb: asb.append(item.get("account"))
                 continue
 
             # Zaman damgasını işle
@@ -191,7 +253,7 @@ def calculate_war_index(per_account_limit: int = 10) -> tuple:
             total_score += pts
             
             signals.append({
-                "account": account,
+                "account": item.get("account", "unknown"),
                 "text": full_text[:160].replace('\n', ' ') + "...",
                 "title": item.get('title', '')[:120],
                 "link": item.get("link", ""),
@@ -205,13 +267,13 @@ def calculate_war_index(per_account_limit: int = 10) -> tuple:
     # En yeni sinyalleri üstte göster
     signals.sort(key=lambda x: x["timestamp"], reverse=True)
 
-    SCORE_CEILING = 700
+    SCORE_CEILING = 1000
     bar_pct = min(int(total_score / SCORE_CEILING * 100), 100)
     
     for s in signals:
         s["raw_total"] = total_score
 
-    print(f"\n[GATTO] Tarama Bitti | Skor: {total_score} | Bar: %{bar_pct} | Sinyal: {len(signals)}\n")
+    print(f"\n[GATTO] Tarama Bitti [{mode}] | Skor: {total_score} | Bar: %{bar_pct} | Sinyal: {len(signals)}\n")
     return bar_pct, signals
 
 
@@ -222,13 +284,15 @@ def calculate_war_index(per_account_limit: int = 10) -> tuple:
 def fetch_all_raw_posts(limit_per_account: int = 10) -> list:
     """Tüm hesaplardan ham gönderileri toplar ve bir liste olarak döner."""
     all_raw_posts = []
-    print(f"[SCRAPER] {len(INTEL_ACCOUNTS)} hesaptan ham veriler toplanıyor...")
-    
-    for account in INTEL_ACCOUNTS:
-        items = fetch_account(account, limit=limit_per_account)
-        for item in items:
-            # Botun tanıması için hesap bilgisini ekliyoruz
-            item["account"] = account
-            all_raw_posts.append(item)
-            
+    if _check_nitter_alive():
+        print(f"[SCRAPER] Plan A: Nitter — {len(INTEL_ACCOUNTS)} hesap taranıyor...")
+        for account in INTEL_ACCOUNTS:
+            items = fetch_account(account, limit=limit_per_account)
+            for item in items:
+                item["account"] = account
+            all_raw_posts.extend(items)
+    else:
+        print(f"[SCRAPER] Plan B: Fallback RSS — {len(FALLBACK_RSS_SOURCES)} kaynak taranıyor...")
+        all_raw_posts = fetch_fallback_sources(limit=limit_per_account)
+
     return all_raw_posts

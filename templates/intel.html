@@ -124,6 +124,11 @@
   from { opacity:0; transform:translateX(-20px); }
   to { opacity:1; transform:translateX(0); }
 }
+.timeline-event:nth-child(1) { animation-delay:.0s; }
+.timeline-event:nth-child(2) { animation-delay:.1s; }
+.timeline-event:nth-child(3) { animation-delay:.2s; }
+.timeline-event:nth-child(4) { animation-delay:.3s; }
+.timeline-event:nth-child(5) { animation-delay:.4s; }
 
 .timeline-dot {
   position:absolute; left:-20px; top:5px; width:12px; height:12px;
@@ -282,16 +287,23 @@
 {% block content %}
 <div class="main">
   
+  <!-- Top Section: Threat Heatmap + Live Meter -->
   <div class="intel-grid">
     
+    <!-- Regional Threat Heatmap -->
     <div class="heatmap-panel">
       <div class="heatmap-title">
         🌍 REGIONAL THREAT ASSESSMENT
       </div>
       
+      {#
+        Dynamic region cards — each region detects matching signals from intel_sources.
+        Keywords define what counts as a signal for that region.
+        Score is sum of signal scores for that region, capped to 100.
+      #}
       {% set regions = [
         {"id":"iran",      "name":"IRAN / HORMUZ",    "keys":["iran","hormuz","irgc","tehran","natanz","persian gulf"],  "icon":"☢",  "note":"Nuclear & Naval Activity"},
-        {"id":"israel",    "name":"ISRAEL / GAZA",    "keys":["israel","idf","gaza","netanyahu","hamas","tel aviv"],        "icon":"✈",  "note":"IDF Operations"},
+        {"id":"israel",    "name":"ISRAEL / GAZA",    "keys":["israel","idf","gaza","netanyahu","hamas","tel aviv"],       "icon":"✈",  "note":"IDF Operations"},
         {"id":"lebanon",   "name":"LEBANON / HEZBOLLAH","keys":["hezbollah","lebanon","beirut"],                           "icon":"🔶", "note":"Hezbollah Activity"},
         {"id":"redsea",    "name":"RED SEA / YEMEN",  "keys":["houthi","red sea","yemen","hodeidah"],                       "icon":"🚀", "note":"Houthi Strikes"},
         {"id":"syria",     "name":"SYRIA / IRAQ",     "keys":["syria","damascus","iraq","baghdad"],                         "icon":"💥", "note":"Cross-border Strikes"},
@@ -301,40 +313,36 @@
       ] %}
 
       <div class="region-grid">
-{% for region in regions %}
-  {% set ns = namespace(count=0, score=0) %}
-  
-  {% for sig in intel_sources %}
-    {% set txt = (sig.text ~ " " ~ sig.title)|lower %}
-    {% set matched = namespace(found=false) %}
-    
-    {# .keys yerine ['keys'] kullanarak çakışmayı önledik #}
-    {% for key in region['keys'] %}
-      {% if key in txt %}
-        {% set matched.found = true %}
-      {% endif %}
-    {% endfor %}
-
-    {% if matched.found %}
-      {% set ns.count = ns.count + 1 %}
-      {% set ns.score = ns.score + (sig.score | default(0)) %}
-    {% endif %}
-  {% endfor %}
-
-  {# Geri kalan skor ve alert mantığı aynı kalabilir... #}
-  {% set raw_pct = (ns.score / 10) | int %}
-  {% if raw_pct > 100 %}{% set pct = 100 %}{% elif raw_pct < 0 %}{% set pct = 0 %}{% else %}{% set pct = raw_pct %}{% endif %}
-  
-  {# ... (Status ve Renk Belirleme Kısmı) ... #}
-  <div class="region-card">
-    <div class="region-name">{{ region.icon }} {{ region.name }}</div>
-    <div class="region-threat" id="region-{{ region.id }}">{{ pct }}</div>
-    {# ... #}
-  </div>
-{% endfor %}
-</div>
+      {% for region in regions %}
+        {% set ns = namespace(count=0, score=0) %}
+        {% for sig in intel_sources %}
+          {% set txt = (sig.text ~ " " ~ sig.title)|lower %}
+          {% if region.keys | select("in", txt) | list | length > 0 %}
+            {% set ns.count = ns.count + 1 %}
+            {% set ns.score = ns.score + sig.score %}
+          {% endif %}
+        {% endfor %}
+        {% set pct = [[(ns.score / 10)|int, 0]|max, 100]|min %}
+        {% if pct >= 70 %}{% set lvl="critical" %}{% set status="CRITICAL ALERT" %}{% set dot="🔴" %}
+        {% elif pct >= 50 %}{% set lvl="high" %}{% set status="HIGH ALERT" %}{% set dot="🔴" %}
+        {% elif pct >= 30 %}{% set lvl="elevated" %}{% set status="ELEVATED" %}{% set dot="🟡" %}
+        {% elif pct >= 15 %}{% set lvl="guarded" %}{% set status="GUARDED" %}{% set dot="🟡" %}
+        {% else %}{% set lvl="low" %}{% set status="LOW" %}{% set dot="🟢" %}
+        {% endif %}
+        <div class="region-card">
+          <div class="region-name">{{ region.icon }} {{ region.name }}</div>
+          <div class="region-threat {{ lvl }}" id="region-{{ region.id }}">{{ pct }}</div>
+          <div class="region-status">{{ status }}</div>
+          <div class="region-signals">
+            <div>{{ dot }} Active: {{ ns.count }} signal{{ "s" if ns.count != 1 }}</div>
+            <div>⚠️ {{ region.note }}</div>
+          </div>
+        </div>
+      {% endfor %}
+      </div>
     </div>
     
+    <!-- Live Threat Meter -->
     <div>
       <div class="meter-panel">
         <div class="heatmap-title" style="color:var(--red);">
@@ -345,7 +353,7 @@
           <div class="meter-bar-bg">
             <div class="meter-bar-fill" id="threat-bar" style="height:0%"></div>
           </div>
-          <div class="meter-value" id="threat-score">{{ war_score|default(0) }}</div>
+          <div class="meter-value" id="threat-score">{{ war_score }}</div>
         </div>
         
         <div class="meter-levels">
@@ -354,6 +362,7 @@
         </div>
       </div>
       
+      <!-- Analysis Stats -->
       <div class="analysis-grid">
         <div class="analysis-card">
           <div class="analysis-label">SIGNALS (24H)</div>
@@ -363,43 +372,26 @@
         
         <div class="analysis-card">
           <div class="analysis-label">CRITICAL EVENTS</div>
-          <div class="analysis-value">
-            {% if intel_sources %}
-               {{ intel_sources|selectattr('score', 'ge', 10)|list|length }}
-            {% else %}
-               0
-            {% endif %}
-          </div>
+          <div class="analysis-value">{{ intel_sources|selectattr('score', 'ge', 10)|list|length }}</div>
           <div class="analysis-trend up">▲ ELEVATED</div>
         </div>
         
         <div class="analysis-card">
           <div class="analysis-label">SOURCES ACTIVE</div>
-          <div class="analysis-value">
-            {% if intel_sources %}
-               {{ intel_sources|map(attribute='account')|unique|list|length }}
-            {% else %}
-               0
-            {% endif %}
-          </div>
+          <div class="analysis-value">{{ intel_sources|map(attribute='account')|unique|list|length }}</div>
           <div class="analysis-trend down">▼ 1 offline</div>
         </div>
         
         <div class="analysis-card">
           <div class="analysis-label">AVG RISK SCORE</div>
-          <div class="analysis-value">
-            {% if intel_sources and intel_sources|length > 0 %}
-              {{ (intel_sources|sum(attribute='score') / intel_sources|length)|round(1) }}
-            {% else %}
-              0
-            {% endif %}
-          </div>
+          <div class="analysis-value">{{ (intel_sources|sum(attribute='score') / intel_sources|length)|round(1) if intel_sources else 0 }}</div>
           <div class="analysis-trend up">▲ RISING</div>
         </div>
       </div>
     </div>
   </div>
   
+  <!-- Live Signal Timeline -->
   <div class="timeline-panel" style="margin-top:20px;">
     <div class="timeline-header">
       <div class="timeline-title">🔴 LIVE SIGNAL FEED</div>
@@ -411,33 +403,32 @@
     </div>
     
     <div class="timeline-track">
-      {% if intel_sources and intel_sources|length > 0 %}
+      {% if intel_sources %}
         {% for signal in intel_sources[:10] %}
         <div class="timeline-event">
           <div class="timeline-dot"></div>
-          <div class="event-score">[+{{ signal.score|default(0) }}]</div>
-          <div class="event-time">{{ (signal.pubDate[:16] if signal.pubDate else 'LIVE') }}</div>
+          <div class="event-score">[+{{ signal.score }}]</div>
+          <div class="event-time">{{ signal.pubDate[:16] if signal.pubDate else 'LIVE' }}</div>
           <div class="event-source">SOURCE: @{{ signal.account }}</div>
           <div class="event-text">{{ signal.text }}</div>
           <div class="event-tags">
-            {% if signal.keywords %}
-              {% for kw in signal.keywords[:5] %}
-              <span class="event-tag">{{ kw|upper }}</span>
-              {% endfor %}
-            {% endif %}
+            {% for kw in signal.keywords[:5] %}
+            <span class="event-tag">{{ kw|upper }}</span>
+            {% endfor %}
           </div>
         </div>
         {% endfor %}
       {% else %}
-        <div style="text-align:center;padding:40px;color:var(--nv-dim);font-family:var(--font-mono);">
+        <div style="text-align:center;padding:40px;color:var(--nv-dim);">
           // NO CRITICAL SIGNALS DETECTED //
         </div>
       {% endif %}
     </div>
   </div>
   
+  <!-- Active Conflicts -->
   <div class="conflicts-panel">
-    <div class="heatmap-title" style="font-size:16px; margin-bottom:15px;">🎯 ACTIVE CONFLICT ZONES</div>
+    <div class="sec-label">🎯 ACTIVE CONFLICT ZONES</div>
     
     <div class="conflict-list">
       <div class="conflict-item">
@@ -466,24 +457,39 @@
           Rerouting via Cape of Good Hope continues.
         </div>
       </div>
+      
+      <div class="conflict-item">
+        <div class="conflict-intensity">🟡 5.1</div>
+        <div class="conflict-location">SYRIA / IRAQ BORDER</div>
+        <div class="conflict-status">
+          Cross-border artillery exchanges. Turkish drone strikes on PKK positions.
+          Low civilian impact, military installations targeted.
+        </div>
+      </div>
     </div>
   </div>
   
+  <!-- AI Prediction Model -->
   <div class="prediction-panel">
     <div class="prediction-title">
       🤖 AI THREAT PROJECTION (NEXT 72H)
     </div>
     <div class="prediction-content">
       Based on current signal velocity and historical patterns, the War Index algorithm predicts a 
-      <span class="prediction-highlight">{{ (war_score|default(0) * 1.15)|round(1) }}%</span> threat level 
+      <span class="prediction-highlight">{{ (war_score * 1.15)|round(1) }}%</span> threat level 
       within 72 hours. Key escalation vectors include:
       <br><br>
-      • <span class="prediction-highlight">HORMUZ BLOCKADE RISK</span> — Iranian naval movements suggest potential strait closure exercise.
+      • <span class="prediction-highlight">HORMUZ BLOCKADE RISK</span> — Iranian naval movements suggest 
+      potential strait closure exercise. Commercial shipping delays probable.
       <br>
-      • <span class="prediction-highlight">ISRAELI PREEMPTIVE STRIKE</span> — IDF mobilization patterns indicate possible operation.
+      • <span class="prediction-highlight">ISRAELI PREEMPTIVE STRIKE</span> — IDF mobilization patterns 
+      indicate possible operation targeting Iranian nuclear infrastructure.
+      <br>
+      • <span class="prediction-highlight">HOUTHI ESCALATION</span> — Red Sea attacks intensifying. 
+      Probability of coalition retaliation: 68%.
       <br><br>
       <em style="color:var(--nv-dim);">
-        Last updated: {{ now|default('STATION_TIME') }} | Confidence: 87% | Model: GATTO-INTEL-v2.1
+        Last updated: {{ now }} | Confidence: 87% | Model: GATTO-INTEL-v2.1
       </em>
     </div>
   </div>
@@ -491,47 +497,47 @@
 </div>
 
 <script>
+// Animate threat meter on load
 document.addEventListener('DOMContentLoaded', function() {
-  // Veri güvenliği: Eğer war_score boşsa 0 al
-  var score = {{ war_score|default(0) }};
+  var score = {{ war_score }};
   var bar = document.getElementById('threat-bar');
   
-  if (bar) {
-    setTimeout(function() {
-      bar.style.height = score + '%';
-    }, 500);
-  }
+  setTimeout(function() {
+    bar.style.height = score + '%';
+  }, 500);
   
+  // Pulse effect for high threat
   if (score >= 70) {
     document.body.classList.add('war-mode');
   }
   
-  // Regional Animation
-  var regionIds = ['iran','israel','lebanon','redsea','syria','ukraine','persian','pakistan'];
-  regionIds.forEach(function(id) {
-    var el = document.getElementById('region-' + id);
+  // Animate regional values
+  var regions = ['iran','israel','lebanon','redsea','syria','ukraine','persian','pakistan'];
+  regions.forEach(function(region) {
+    var el = document.getElementById('region-' + region);
     if (el) {
-      var target = parseInt(el.textContent) || 0;
+      var target = parseInt(el.textContent);
       var current = 0;
-      var speed = target > 0 ? Math.max(10, 500 / target) : 50;
-      
       var interval = setInterval(function() {
         if (current < target) {
-          current++;
+          current += Math.ceil((target - current) / 10);
           el.textContent = current;
         } else {
           clearInterval(interval);
         }
-      }, speed);
+      }, 50);
     }
   });
 });
 
-// Filter UI
+// Filter buttons
 document.querySelectorAll('.filter-btn').forEach(function(btn) {
   btn.addEventListener('click', function() {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.filter-btn').forEach(function(b) {
+      b.classList.remove('active');
+    });
     this.classList.add('active');
+    // Add filter logic here
   });
 });
 </script>

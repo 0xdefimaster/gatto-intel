@@ -272,24 +272,7 @@ var milVisible = {
 var map = new maplibregl.Map({
     container: 'map',
     // Eğer OpenFreeMap çalışmıyorsa bu alternatif bir stil (örneğin maptiler veya doğrudan OSM):
-    style: {
-      version: 8,
-      sources: {
-        'osm': {
-          type: 'raster',
-          tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
-          tileSize: 256,
-          attribution: '© OpenStreetMap contributors'
-        }
-      },
-      layers: [{
-        id: 'osm-tiles',
-        type: 'raster',
-        source: 'osm',
-        minzoom: 0,
-        maxzoom: 19
-      }]
-    },
+    style: 'https://demotiles.maplibre.org/style.json', 
     center: [42, 28],
     zoom: 3,
     // ... diğer ayarlar
@@ -413,25 +396,51 @@ map.on('load', function() {
     paint:{ 'circle-radius':['*',['get','radius'],0.45], 'circle-color':['get','color'],
             'circle-opacity':1, 'circle-stroke-color':'#000', 'circle-stroke-width':1 }});
 
-  map.addLayer({ 
-    id: 'mil-label', 
-    type: 'symbol', 
-    source: 'mil-assets',
-    layout: { 
-      'text-field': ['get', 'symbol'], // Toggle butonundaki emojiyi çeker
-      'text-size': 16,                 // Biraz büyüttük ki net görünsün
-      'text-anchor': 'center',
-      'text-allow-overlap': true, 
-      'text-ignore-placement': true,
-      // BURASI ÖNEMLİ: Font paketini 'klasik' fontlara çeviriyoruz
-      'text-font': ['literal', ['Open Sans Regular', 'Arial Unicode MS Regular']]
-    },
-    paint: { 
-      'text-color': ['get', 'color'], 
-      'text-halo-color': '#000', 
-      'text-halo-width': 1 
-    }
-  });
+  // Emoji marker'lar — MapLibre text-field emoji'leri render edemez
+  // HTML marker kullanıyoruz
+  window._milMarkers = [];
+  function renderMilMarkers() {
+    // Önceki marker'ları temizle
+    window._milMarkers.forEach(function(m) { m.remove(); });
+    window._milMarkers = [];
+
+    MIL_ASSETS.forEach(function(a) {
+      if (!milVisible[a.cls]) return;
+
+      var el = document.createElement('div');
+      el.style.cssText = 'font-size:18px;cursor:pointer;user-select:none;' +
+        'text-shadow:0 0 6px ' + (MIL_COLORS[a.cls]||'#00ccff') + ';' +
+        'filter:drop-shadow(0 0 4px ' + (MIL_COLORS[a.cls]||'#00ccff') + ');' +
+        'transition:transform .15s;';
+      el.textContent = a.symbol || '●';
+      el.title = a.name;
+
+      el.addEventListener('mouseenter', function() { el.style.transform='scale(1.3)'; });
+      el.addEventListener('mouseleave', function() { el.style.transform='scale(1)'; });
+      el.addEventListener('click', function(e) {
+        e.stopPropagation();
+        new maplibregl.Popup({ closeButton:true, maxWidth:'300px' })
+          .setLngLat([a.lng, a.lat])
+          .setHTML(
+            '<div class="mil-popup-inner">' +
+              '<div class="mil-popup-name">'+a.symbol+' '+a.name+'</div>' +
+              '<div class="mil-popup-class">'+a.cls.toUpperCase()+' ASSET</div>' +
+              '<div class="mil-popup-text">'+a.status+'</div>' +
+              '<div class="mil-popup-foot">' +
+                '<span class="mil-popup-src">SRC: '+a.source+'</span>' +
+                '<span class="mil-popup-date">'+a.date+'</span>' +
+              '</div></div>'
+          ).addTo(map);
+      });
+
+      var marker = new maplibregl.Marker({ element: el, anchor:'center' })
+        .setLngLat([a.lng, a.lat])
+        .addTo(map);
+      window._milMarkers.push(marker);
+    });
+  }
+
+  renderMilMarkers();
 
   // Military pulse animation (slower: 3.6s)
   var milStart = null;
@@ -446,31 +455,13 @@ map.on('load', function() {
   }
   requestAnimationFrame(animateMil);
 
-  // Military click → popup
-  ['mil-dot','mil-ring'].forEach(function(lyr) {
-    map.on('click', lyr, function(e) {
-      var p = e.features[0].properties;
-      new maplibregl.Popup({ closeButton:true, maxWidth:'300px' })
-        .setLngLat(e.features[0].geometry.coordinates)
-        .setHTML(
-          '<div class="mil-popup-inner">' +
-            '<div class="mil-popup-name">'+(p.symbol||'●')+' '+p.name+'</div>' +
-            '<div class="mil-popup-class">'+p.cls.toUpperCase()+' ASSET</div>' +
-            '<div class="mil-popup-text">'+p.status+'</div>' +
-            '<div class="mil-popup-foot">' +
-              '<span class="mil-popup-src">SRC: '+p.source+'</span>' +
-              '<span class="mil-popup-date">'+p.date+'</span>' +
-            '</div></div>'
-        ).addTo(map);
-    });
-    map.on('mouseenter', lyr, function() { map.getCanvas().style.cursor='pointer'; });
-    map.on('mouseleave', lyr, function() { map.getCanvas().style.cursor='crosshair'; });
-  });
+  // Military click popup — HTML marker'lara taşındı (yukarıda)
 
   // ── Refresh helpers (auto-refresh'in çağıracağı fonksiyonlar) ──
   window._refreshMil = function() {
     var src = map.getSource('mil-assets');
     if (src) src.setData(buildMilGeoJSON(milVisible));
+    renderMilMarkers();
   };
   window._refreshEvents = function() {
     var src = map.getSource('events');
@@ -491,6 +482,7 @@ function toggleMil(btn, cls) {
   milVisible[cls] = !milVisible[cls];
   btn.classList.toggle('on', milVisible[cls]);
   if (window._refreshMil) window._refreshMil();
+  if (window._milMarkers !== undefined) renderMilMarkers();
 }
 
 // ─────────────────────────────────────────────────────────────

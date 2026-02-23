@@ -44,7 +44,7 @@ RISK_THRESHOLD      = 9  # Sadece bu puanın üzerindekiler paylaşılır
 # Gemini model sıralaması — rate limit'e göre sırayla denenir
 GEMINI_MODELS = [
     "gemini-2.5-flash",
-    "gemini-2.5-flash-lite-preview-06-17",
+    "gemini-2.5-flash-lite",
     "gemini-3-flash-preview",
 ]
 

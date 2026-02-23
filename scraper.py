@@ -132,7 +132,7 @@ def fetch_rss(url: str, label: str, limit: int = 10) -> list:
     }
     try:
         # SSL hatalarını ve timeout'ları yönetmek için verify=False ve timeout=12
-        resp = requests.get(url, headers=headers, timeout=5, verify=False)
+        resp = requests.get(url, headers=headers, timeout=12, verify=False)
         resp.raise_for_status()
         
         # XML Ayrıştırma
@@ -168,13 +168,22 @@ def fetch_rss(url: str, label: str, limit: int = 10) -> list:
 # NITTER CANLILIK KONTROLÜ (program başında bir kez yapılır)
 # ─────────────────────────────────────────────────────────────────────────────
 
-_NITTER_ALIVE = None  # None=test edilmedi, True=çalışıyor, False=ölü
+_NITTER_ALIVE     = None     # None=test edilmedi, True=çalışıyor, False=ölü
+_NITTER_ALIVE_TS  = 0        # Son kontrol zamanı (unix timestamp)
+_NITTER_ALIVE_TTL = 15 * 60  # 15 dakikada bir yeniden kontrol et
+_NITTER_WORKING   = None     # Çalışan instance — her hesap için tekrar aramayı önler
 
 def _check_nitter_alive() -> bool:
-    global _NITTER_ALIVE
-    if _NITTER_ALIVE is not None:
+    global _NITTER_ALIVE, _NITTER_ALIVE_TS, _NITTER_WORKING
+    import time as _time
+    now = _time.time()
+
+    # TTL dolmamışsa önbelleği kullan
+    if _NITTER_ALIVE is not None and (now - _NITTER_ALIVE_TS) < _NITTER_ALIVE_TTL:
         return _NITTER_ALIVE
-    # Tüm instance'ları sırayla dene, her biri 8sn timeout — ilk çalışanı bulunca dur
+
+    # Yeniden kontrol (ilk çalışma veya 15dk sonra)
+    print("[~] Nitter canlılık kontrolü yapılıyor...")
     for instance in NITTER_INSTANCES:
         try:
             url = f"{instance.rstrip('/')}/sentdefender/rss"
@@ -182,26 +191,45 @@ def _check_nitter_alive() -> bool:
                              headers={"User-Agent": "Mozilla/5.0"})
             if r.status_code == 200 and b"<rss" in r.content[:300]:
                 print(f"[✓] Nitter aktif: {instance}")
-                _NITTER_ALIVE = True
+                _NITTER_ALIVE    = True
+                _NITTER_ALIVE_TS = now
+                _NITTER_WORKING  = instance
                 return True
         except:
             pass
+
     print("[!] Nitter ölü → Plan B: Fallback RSS devreye giriyor.")
-    _NITTER_ALIVE = False
+    _NITTER_ALIVE    = False
+    _NITTER_ALIVE_TS = now
+    _NITTER_WORKING  = None
     return False
 
 def fetch_fallback_sources(limit: int = 15) -> list:
     """Plan B: Fallback RSS kaynaklarından veri çeker."""
+    from email.utils import parsedate_to_datetime
     all_items = []
     for source in FALLBACK_RSS_SOURCES:
         items = fetch_rss(source["url"], source["account"], limit=limit)
         for item in items:
             item["account"] = source["account"]
+            # Timestamp eksikse pubDate'den üret
+            if "timestamp" not in item or item["timestamp"] == 0:
+                try:
+                    dt = parsedate_to_datetime(item.get("pubDate", ""))
+                    item["timestamp"] = dt.timestamp()
+                except:
+                    item["timestamp"] = 0
         all_items.extend(items)
     return all_items
 
 def fetch_account(account: str, limit: int = 10) -> list:
-    for instance in NITTER_INSTANCES:
+    # Çalışan instance varsa önce onu dene
+    instances = NITTER_INSTANCES[:]
+    if _NITTER_WORKING and _NITTER_WORKING in instances:
+        instances.remove(_NITTER_WORKING)
+        instances.insert(0, _NITTER_WORKING)
+
+    for instance in instances:
         url = f"{instance.rstrip('/')}/{account}/rss"
         results = fetch_rss(url, f"nitter/@{account}", limit=limit)
         if results:
